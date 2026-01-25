@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= presentation.client %> - Video Presentation</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="https://unpkg.com/@mux/mux-player"></script>
+  <style>
+    :root {
+      --accent-color: <%= presentation.primaryColor || '#ef4444' %>;
+      --bg-color: <%= presentation.theme === 'light' ? '#ffffff' : '#111827' %>;
+      --text-color: <%= presentation.theme === 'light' ? '#111827' : '#ffffff' %>;
+      --text-muted: <%= presentation.theme === 'light' ? '#6b7280' : '#9ca3af' %>;
+      --card-bg: <%= presentation.theme === 'light' ? '#f9fafb' : '#1f2937' %>;
+      --border-color: <%= presentation.theme === 'light' ? '#e5e7eb' : '#374151' %>;
+    }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+    .accent { color: var(--accent-color); }
+    .accent-bg { background-color: var(--accent-color); }
+    .card-bg { background-color: var(--card-bg); }
+    .text-muted { color: var(--text-muted); }
+    .border-themed { border-color: var(--border-color); }
+
+    /* Lightbox styles */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(0, 0, 0, 0.95);
+      padding: 1rem;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox-content {
+      max-width: 1200px;
+      width: 100%;
+      margin: auto;
+    }
+
+    /* Video card hover effect */
+    .video-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .video-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Header -->
+  <header class="py-8 px-4 sm:px-6 lg:px-8 border-b border-themed">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <% if (presentation.clientLogo) { %>
+            <img src="<%= presentation.clientLogo %>" alt="<%= presentation.client %>" class="h-12 w-auto object-contain">
+          <% } %>
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold"><%= presentation.client %></h1>
+            <p class="text-muted text-sm mt-1">
+              <%= new Date(presentation.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+            </p>
+          </div>
+        </div>
+        <div class="text-muted text-sm">
+          <%= videos.length %> video<%= videos.length !== 1 ? 's' : '' %>
+        </div>
+      </div>
+
+      <% if (presentation.message) { %>
+        <div class="mt-6 p-4 card-bg rounded-lg border border-themed">
+          <p class="text-muted leading-relaxed whitespace-pre-wrap"><%= presentation.message %></p>
+        </div>
+      <% } %>
+    </div>
+  </header>
+
+  <!-- Video Grid -->
+  <main class="py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% videos.forEach(function(video, index) { %>
+          <article class="video-card card-bg rounded-xl overflow-hidden cursor-pointer border border-themed"
+                   onclick="openLightbox(<%= index %>)">
+            <div class="aspect-video relative group">
+              <img src="https://image.mux.com/<%= video.embedId %>/thumbnail.jpg?width=640"
+                   alt="<%= video.title || video.project %>"
+                   class="w-full h-full object-cover"
+                   loading="lazy"
+                   onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%234b5563%22%3E%3Cpath d=%22M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z%22/%3E%3C/svg%3E'">
+
+              <!-- Play button overlay -->
+              <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all">
+                <div class="w-16 h-16 rounded-full accent-bg flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all">
+                  <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4">
+              <h2 class="font-semibold truncate"><%= video.title || video.project %></h2>
+              <% if (video.description) { %>
+                <p class="text-muted text-sm mt-1 line-clamp-2"><%= video.description %></p>
+              <% } %>
+              <% if (video.tags && video.tags.length > 0) { %>
+                <div class="flex flex-wrap gap-1 mt-3">
+                  <% video.tags.slice(0, 3).forEach(function(tag) { %>
+                    <span class="text-xs px-2 py-0.5 rounded-full border border-themed text-muted"><%= tag %></span>
+                  <% }); %>
+                </div>
+              <% } %>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+    <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white hover:text-gray-300 z-10">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <!-- Navigation arrows -->
+    <button onclick="prevVideo(event)" class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 z-10 p-2">
+      <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <button onclick="nextVideo(event)" class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 z-10 p-2">
+      <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+    </button>
+
+    <div class="lightbox-content flex flex-col items-center justify-center" onclick="event.stopPropagation()">
+      <div id="lightbox-player" class="w-full aspect-video bg-black rounded-lg overflow-hidden"></div>
+      <div class="mt-4 text-center">
+        <h3 id="lightbox-title" class="text-xl font-semibold text-white"></h3>
+        <p id="lightbox-description" class="text-gray-400 mt-1"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-6 px-4 text-center text-muted text-sm border-t border-themed">
+    <p>Presented by <span class="accent font-semibold">Firehawk</span></p>
+  </footer>
+
+  <script>
+    const videos = <%- JSON.stringify(videos.map(v => ({
+      id: v._id,
+      embedId: v.embedId,
+      title: v.title || v.project,
+      description: v.description || ''
+    }))) %>;
+
+    let currentIndex = 0;
+    let player = null;
+
+    function openLightbox(index) {
+      currentIndex = index;
+      const video = videos[index];
+      const lightbox = document.getElementById('lightbox');
+      const playerContainer = document.getElementById('lightbox-player');
+
+      // Create Mux player
+      playerContainer.innerHTML = `
+        <mux-player
+          playback-id="${video.embedId}"
+          metadata-video-title="${video.title}"
+          accent-color="<%= presentation.primaryColor || '#ef4444' %>"
+          autoplay
+          style="width: 100%; height: 100%;"
+        ></mux-player>
+      `;
+
+      document.getElementById('lightbox-title').textContent = video.title;
+      document.getElementById('lightbox-description').textContent = video.description;
+
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(event) {
+      if (event && event.target !== event.currentTarget) return;
+      const lightbox = document.getElementById('lightbox');
+      const playerContainer = document.getElementById('lightbox-player');
+      playerContainer.innerHTML = '';
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function prevVideo(event) {
+      event.stopPropagation();
+      currentIndex = (currentIndex - 1 + videos.length) % videos.length;
+      openLightbox(currentIndex);
+    }
+
+    function nextVideo(event) {
+      event.stopPropagation();
+      currentIndex = (currentIndex + 1) % videos.length;
+      openLightbox(currentIndex);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (!document.getElementById('lightbox').classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prevVideo(e);
+      if (e.key === 'ArrowRight') nextVideo(e);
+    });
+  </script>
+</body>
+</html>

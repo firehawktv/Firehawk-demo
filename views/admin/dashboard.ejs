@@ -1,0 +1,121 @@
+<%- include('../layouts/admin', { body: `
+
+<!-- Dashboard Header -->
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+  <p class="mt-2 text-gray-600">Manage your video library and client presentations</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center">
+      <div class="p-3 bg-red-100 rounded-full">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+        </svg>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500">Total Videos</p>
+        <p class="text-2xl font-semibold text-gray-900">${videoCount}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center">
+      <div class="p-3 bg-blue-100 rounded-full">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500">Presentations</p>
+        <p class="text-2xl font-semibold text-gray-900">${presentationCount}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+  <a href="/admin/videos/new" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow flex items-center">
+    <div class="p-3 bg-green-100 rounded-full">
+      <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+    </div>
+    <div class="ml-4">
+      <p class="text-lg font-medium text-gray-900">Add New Video</p>
+      <p class="text-sm text-gray-500">Add a video to your library</p>
+    </div>
+  </a>
+
+  <a href="/admin/presentations/new" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow flex items-center">
+    <div class="p-3 bg-purple-100 rounded-full">
+      <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+    </div>
+    <div class="ml-4">
+      <p class="text-lg font-medium text-gray-900">Create Presentation</p>
+      <p class="text-sm text-gray-500">Build a new client presentation</p>
+    </div>
+  </a>
+</div>
+
+<!-- Recent Items -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <!-- Recent Videos -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+      <h2 class="text-lg font-medium text-gray-900">Recent Videos</h2>
+      <a href="/admin/videos" class="text-sm text-red-600 hover:text-red-700">View all</a>
+    </div>
+    <ul class="divide-y divide-gray-200">
+      <% recentVideos.forEach(function(video) { %>
+        <li class="px-6 py-4 hover:bg-gray-50">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-900"><%= video.title || video.project %></p>
+              <p class="text-sm text-gray-500"><%= video.client %></p>
+            </div>
+            <a href="/admin/videos/<%= video._id %>/edit" class="text-sm text-gray-500 hover:text-gray-700">Edit</a>
+          </div>
+        </li>
+      <% }); %>
+      <% if (recentVideos.length === 0) { %>
+        <li class="px-6 py-4 text-gray-500 text-sm">No videos yet</li>
+      <% } %>
+    </ul>
+  </div>
+
+  <!-- Recent Presentations -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+      <h2 class="text-lg font-medium text-gray-900">Recent Presentations</h2>
+      <a href="/admin/presentations" class="text-sm text-red-600 hover:text-red-700">View all</a>
+    </div>
+    <ul class="divide-y divide-gray-200">
+      <% recentPresentations.forEach(function(pres) { %>
+        <li class="px-6 py-4 hover:bg-gray-50">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-900"><%= pres.client %></p>
+              <p class="text-sm text-gray-500"><%= pres.videos.length %> videos - <%= pres.layout %> layout</p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <a href="/p/<%= pres.slug %>" target="_blank" class="text-sm text-blue-600 hover:text-blue-700">View</a>
+              <a href="/admin/presentations/<%= pres._id %>/edit" class="text-sm text-gray-500 hover:text-gray-700">Edit</a>
+            </div>
+          </div>
+        </li>
+      <% }); %>
+      <% if (recentPresentations.length === 0) { %>
+        <li class="px-6 py-4 text-gray-500 text-sm">No presentations yet</li>
+      <% } %>
+    </ul>
+  </div>
+</div>
+
+` }) %>
