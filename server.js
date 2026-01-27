@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const session = require('express-session');
 const path = require('path');
 const connectDB = require('./config/db');
 
@@ -13,14 +12,6 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Session for admin authentication (simple implementation)
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'firehawk-secret-key-change-in-production',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: process.env.NODE_ENV === 'production' }
-}));
 
 // View engine
 app.set('view engine', 'ejs');
