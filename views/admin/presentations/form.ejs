@@ -1,4 +1,4 @@
-<%- include('../../layouts/admin', { body: `
+<%- include('../../partials/admin-header') %>
 
 <!-- Header -->
 <div class="mb-6">
@@ -8,7 +8,7 @@
     </svg>
     Back to Presentations
   </a>
-  <h1 class="text-3xl font-bold text-gray-900">${presentation ? 'Edit Presentation' : 'Create Presentation'}</h1>
+  <h1 class="text-3xl font-bold text-gray-900"><%= presentation ? 'Edit Presentation' : 'Create Presentation' %></h1>
   <% if (presentation) { %>
     <p class="mt-2 text-gray-600">
       Public URL: <a href="/p/<%= presentation.slug %>" target="_blank" class="text-blue-600 hover:underline">/p/<%= presentation.slug %></a>
@@ -24,7 +24,7 @@
 <% } %>
 
 <!-- Form -->
-<form action="${action}" method="${method}" class="space-y-6">
+<form action="<%= action %>" method="<%= method %>" class="space-y-6">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     <!-- Main Content -->
@@ -38,7 +38,7 @@
           <div>
             <label for="client" class="block text-sm font-medium text-gray-700 mb-1">Client Name *</label>
             <input type="text" name="client" id="client" required
-                   value="${presentation ? presentation.client : ''}"
+                   value="<%= presentation ? presentation.client : '' %>"
                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500"
                    placeholder="Company or client name">
           </div>
@@ -46,7 +46,7 @@
           <div>
             <label for="clientLogo" class="block text-sm font-medium text-gray-700 mb-1">Client Logo URL</label>
             <input type="url" name="clientLogo" id="clientLogo"
-                   value="${presentation ? (presentation.clientLogo || '') : ''}"
+                   value="<%= presentation ? (presentation.clientLogo || '') : '' %>"
                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500"
                    placeholder="https://example.com/logo.png">
           </div>
@@ -56,7 +56,7 @@
           <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
           <textarea name="message" id="message" rows="4"
                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500"
-                    placeholder="Personal message for the client...">${presentation ? (presentation.message || '') : ''}</textarea>
+                    placeholder="Personal message for the client..."><%= presentation ? (presentation.message || '') : '' %></textarea>
         </div>
       </div>
 
@@ -70,7 +70,7 @@
             <% const isSelected = presentation && presentation.videos.some(v => v._id.toString() === video._id.toString()); %>
             <label class="relative cursor-pointer group">
               <input type="checkbox" name="videos" value="<%= video._id %>"
-                     ${isSelected ? 'checked' : ''}
+                     <%= isSelected ? 'checked' : '' %>
                      class="sr-only peer">
               <div class="border-2 rounded-lg overflow-hidden peer-checked:border-red-500 peer-checked:ring-2 peer-checked:ring-red-200 border-gray-200 hover:border-gray-300 transition-colors">
                 <div class="aspect-video bg-gray-200 relative">
@@ -110,9 +110,9 @@
         <h2 class="text-lg font-medium text-gray-900 mb-4">Layout</h2>
 
         <div class="space-y-3">
-          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 ${presentation?.layout !== 'reel' ? 'border-red-500 bg-red-50' : 'border-gray-200'}">
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 <%= (!presentation || presentation.layout === 'grid') ? 'border-red-500 bg-red-50' : 'border-gray-200' %>">
             <input type="radio" name="layout" value="grid"
-                   ${!presentation || presentation.layout === 'grid' ? 'checked' : ''}
+                   <%= (!presentation || presentation.layout === 'grid') ? 'checked' : '' %>
                    class="text-red-600 focus:ring-red-500">
             <div class="ml-3">
               <span class="text-sm font-medium text-gray-900">Grid</span>
@@ -120,9 +120,9 @@
             </div>
           </label>
 
-          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 ${presentation?.layout === 'reel' ? 'border-red-500 bg-red-50' : 'border-gray-200'}">
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 <%= (presentation && presentation.layout === 'reel') ? 'border-red-500 bg-red-50' : 'border-gray-200' %>">
             <input type="radio" name="layout" value="reel"
-                   ${presentation?.layout === 'reel' ? 'checked' : ''}
+                   <%= (presentation && presentation.layout === 'reel') ? 'checked' : '' %>
                    class="text-red-600 focus:ring-red-500">
             <div class="ml-3">
               <span class="text-sm font-medium text-gray-900">Reel</span>
@@ -139,7 +139,7 @@
         <div class="space-y-3">
           <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
             <input type="radio" name="theme" value="dark"
-                   ${!presentation || presentation.theme === 'dark' ? 'checked' : ''}
+                   <%= (!presentation || presentation.theme === 'dark') ? 'checked' : '' %>
                    class="text-red-600 focus:ring-red-500">
             <div class="ml-3">
               <span class="text-sm font-medium text-gray-900">Dark</span>
@@ -148,7 +148,7 @@
 
           <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
             <input type="radio" name="theme" value="light"
-                   ${presentation?.theme === 'light' ? 'checked' : ''}
+                   <%= (presentation && presentation.theme === 'light') ? 'checked' : '' %>
                    class="text-red-600 focus:ring-red-500">
             <div class="ml-3">
               <span class="text-sm font-medium text-gray-900">Light</span>
@@ -161,10 +161,10 @@
             <label for="primaryColor" class="block text-sm font-medium text-gray-700 mb-1">Accent Color</label>
             <div class="flex items-center space-x-2">
               <input type="color" name="primaryColor" id="primaryColor"
-                     value="${presentation?.primaryColor || '#ef4444'}"
+                     value="<%= (presentation && presentation.primaryColor) ? presentation.primaryColor : '#ef4444' %>"
                      class="h-10 w-16 border border-gray-300 rounded cursor-pointer">
               <input type="text" id="primaryColorText"
-                     value="${presentation?.primaryColor || '#ef4444'}"
+                     value="<%= (presentation && presentation.primaryColor) ? presentation.primaryColor : '#ef4444' %>"
                      class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono"
                      onchange="document.getElementById('primaryColor').value = this.value">
             </div>
@@ -180,7 +180,7 @@
           <div>
             <label for="expiresAt" class="block text-sm font-medium text-gray-700 mb-1">Expires On</label>
             <input type="date" name="expiresAt" id="expiresAt"
-                   value="${presentation?.expiresAt ? new Date(presentation.expiresAt).toISOString().split('T')[0] : ''}"
+                   value="<%= (presentation && presentation.expiresAt) ? new Date(presentation.expiresAt).toISOString().split('T')[0] : '' %>"
                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500">
             <p class="mt-1 text-xs text-gray-500">Leave blank for no expiration</p>
           </div>
@@ -188,7 +188,7 @@
           <% if (presentation) { %>
             <div class="flex items-center">
               <input type="checkbox" name="isActive" id="isActive"
-                     ${presentation.isActive ? 'checked' : ''}
+                     <%= presentation.isActive ? 'checked' : '' %>
                      class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
               <label for="isActive" class="ml-2 text-sm text-gray-700">Active</label>
             </div>
@@ -200,7 +200,7 @@
       <div class="bg-white rounded-lg shadow p-6">
         <div class="space-y-3">
           <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium">
-            ${presentation ? 'Update Presentation' : 'Create Presentation'}
+            <%= presentation ? 'Update Presentation' : 'Create Presentation' %>
           </button>
           <a href="/admin/presentations" class="block w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium text-center">
             Cancel
@@ -220,4 +220,4 @@ document.getElementById('primaryColor').addEventListener('input', function() {
 });
 </script>
 
-` }) %>
+<%- include('../../partials/admin-footer') %>

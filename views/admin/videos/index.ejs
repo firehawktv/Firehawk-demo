@@ -1,10 +1,10 @@
-<%- include('../../layouts/admin', { body: `
+<%- include('../../partials/admin-header') %>
 
 <!-- Header -->
 <div class="flex justify-between items-center mb-6">
   <div>
     <h1 class="text-3xl font-bold text-gray-900">Videos</h1>
-    <p class="mt-1 text-gray-600">${pagination.total} videos in library</p>
+    <p class="mt-1 text-gray-600"><%= pagination.total %> videos in library</p>
   </div>
   <a href="/admin/videos/new" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center">
     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,7 +19,7 @@
   <% const msg = typeof success !== 'undefined' ? success : (typeof error !== 'undefined' ? error : ''); %>
   <% const isError = typeof error !== 'undefined'; %>
   <% if (msg) { %>
-    <div class="mb-6 p-4 rounded-lg ${isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
+    <div class="mb-6 p-4 rounded-lg <%= isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' %>">
       <%= msg %>
     </div>
   <% } %>
@@ -30,7 +30,7 @@
   <form method="GET" action="/admin/videos" class="flex flex-wrap gap-4">
     <div class="flex-1 min-w-[200px]">
       <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-      <input type="text" name="search" value="${filters.search || ''}" placeholder="Search videos..."
+      <input type="text" name="search" value="<%= filters.search || '' %>" placeholder="Search videos..."
         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500">
     </div>
     <div class="w-48">
@@ -38,7 +38,7 @@
       <select name="client" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500">
         <option value="">All Clients</option>
         <% clients.forEach(function(c) { %>
-          <option value="<%= c %>" ${filters.client === c ? 'selected' : ''}><%= c %></option>
+          <option value="<%= c %>" <%= filters.client === c ? 'selected' : '' %>><%= c %></option>
         <% }); %>
       </select>
     </div>
@@ -47,7 +47,7 @@
       <select name="tag" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500">
         <option value="">All Tags</option>
         <% tags.forEach(function(t) { %>
-          <option value="<%= t %>" ${filters.tag === t ? 'selected' : ''}><%= t %></option>
+          <option value="<%= t %>" <%= filters.tag === t ? 'selected' : '' %>><%= t %></option>
         <% }); %>
       </select>
     </div>
@@ -97,7 +97,7 @@
             </div>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${video.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= video.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
               <%= video.isActive ? 'Active' : 'Inactive' %>
             </span>
           </td>
@@ -125,8 +125,8 @@
   <div class="mt-6 flex justify-center">
     <nav class="flex items-center space-x-2">
       <% for (let i = 1; i <= pagination.totalPages; i++) { %>
-        <a href="/admin/videos?page=<%= i %>&client=${encodeURIComponent(filters.client || '')}&tag=${encodeURIComponent(filters.tag || '')}&search=${encodeURIComponent(filters.search || '')}"
-           class="px-3 py-2 rounded-lg ${pagination.page === i ? 'bg-red-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}">
+        <a href="/admin/videos?page=<%= i %>&client=<%= encodeURIComponent(filters.client || '') %>&tag=<%= encodeURIComponent(filters.tag || '') %>&search=<%= encodeURIComponent(filters.search || '') %>"
+           class="px-3 py-2 rounded-lg <%= pagination.page === i ? 'bg-red-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100' %>">
           <%= i %>
         </a>
       <% } %>
@@ -134,4 +134,4 @@
   </div>
 <% } %>
 
-` }) %>
+<%- include('../../partials/admin-footer') %>

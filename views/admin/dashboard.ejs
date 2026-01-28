@@ -1,4 +1,4 @@
-<%- include('../layouts/admin', { body: `
+<%- include('../partials/admin-header') %>
 
 <!-- Dashboard Header -->
 <div class="mb-8">
@@ -17,7 +17,7 @@
       </div>
       <div class="ml-4">
         <p class="text-sm font-medium text-gray-500">Total Videos</p>
-        <p class="text-2xl font-semibold text-gray-900">${videoCount}</p>
+        <p class="text-2xl font-semibold text-gray-900"><%= videoCount %></p>
       </div>
     </div>
   </div>
@@ -31,7 +31,7 @@
       </div>
       <div class="ml-4">
         <p class="text-sm font-medium text-gray-500">Presentations</p>
-        <p class="text-2xl font-semibold text-gray-900">${presentationCount}</p>
+        <p class="text-2xl font-semibold text-gray-900"><%= presentationCount %></p>
       </div>
     </div>
   </div>
@@ -118,4 +118,4 @@
   </div>
 </div>
 
-` }) %>
+<%- include('../partials/admin-footer') %>
