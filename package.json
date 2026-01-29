@@ -1,7 +1,7 @@
 {
-  "name": "firehawk-crm",
+  "name": "firehawk-cms",
   "version": "1.0.0",
-  "description": "Video CRM with grid/reel presentation templates and MongoDB backend",
+  "description": "Video CMS with grid/reel presentation templates and MongoDB backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -21,7 +21,7 @@
     "tailwindcss": "^3.4.0"
   },
   "keywords": [
-    "crm",
+    "cms",
     "video",
     "mux",
     "mongodb",

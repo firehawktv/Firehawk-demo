@@ -3,10 +3,10 @@
 <!-- Header -->
 <div class="flex justify-between items-center mb-6">
   <div>
-    <h1 class="text-3xl font-bold text-gray-900">Presentations</h1>
-    <p class="mt-1 text-gray-600"><%= pagination.total %> client presentations</p>
+    <h1 class="text-3xl font-bold text-white">Presentations</h1>
+    <p class="mt-1 text-gray-400"><%= pagination.total %> client presentations</p>
   </div>
-  <a href="/admin/presentations/new" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center">
+  <a href="/admin/presentations/new" class="bg-spindle-600 text-white px-4 py-2 rounded-lg hover:bg-spindle-700 transition-colors flex items-center">
     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
     </svg>
@@ -19,7 +19,7 @@
   <% const msg = typeof success !== 'undefined' ? success : (typeof error !== 'undefined' ? error : ''); %>
   <% const isError = typeof error !== 'undefined'; %>
   <% if (msg) { %>
-    <div class="mb-6 p-4 rounded-lg <%= isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' %>">
+    <div class="mb-6 p-4 rounded-lg <%= isError ? 'bg-red-900 text-red-300' : 'bg-green-900 text-green-300' %>">
       <%= msg %>
     </div>
   <% } %>
@@ -28,23 +28,23 @@
 <!-- Presentations Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   <% presentations.forEach(function(pres) { %>
-    <div class="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow">
+    <div class="bg-gray-800 rounded-lg shadow overflow-hidden hover:bg-gray-750 transition-colors">
       <!-- Header -->
-      <div class="p-4 border-b border-gray-100">
+      <div class="p-4 border-b border-gray-700">
         <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-gray-900 truncate"><%= pres.client %></h3>
-          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <%= pres.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+          <h3 class="text-lg font-semibold text-white truncate"><%= pres.client %></h3>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <%= pres.isActive ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-400' %>">
             <%= pres.isActive ? 'Active' : 'Inactive' %>
           </span>
         </div>
-        <p class="text-sm text-gray-500 mt-1"><%= pres.videos.length %> videos - <%= pres.layout %> layout</p>
+        <p class="text-sm text-gray-400 mt-1"><%= pres.videos.length %> videos - <%= pres.layout %> layout</p>
       </div>
 
       <!-- Video Thumbnails -->
-      <div class="p-4 bg-gray-50">
+      <div class="p-4 bg-gray-700">
         <div class="flex -space-x-2 overflow-hidden">
           <% pres.videos.slice(0, 4).forEach(function(video) { %>
-            <div class="w-12 h-12 rounded border-2 border-white bg-gray-200 overflow-hidden">
+            <div class="w-12 h-12 rounded border-2 border-gray-800 bg-gray-600 overflow-hidden">
               <img src="https://image.mux.com/<%= video.embedId %>/thumbnail.jpg?width=96"
                    alt="<%= video.title %>"
                    class="w-full h-full object-cover"
@@ -52,7 +52,7 @@
             </div>
           <% }); %>
           <% if (pres.videos.length > 4) { %>
-            <div class="w-12 h-12 rounded border-2 border-white bg-gray-300 flex items-center justify-center text-sm font-medium text-gray-600">
+            <div class="w-12 h-12 rounded border-2 border-gray-800 bg-gray-600 flex items-center justify-center text-sm font-medium text-gray-300">
               +<%= pres.videos.length - 4 %>
             </div>
           <% } %>
@@ -60,25 +60,25 @@
       </div>
 
       <!-- Stats -->
-      <div class="px-4 py-3 border-t border-gray-100 bg-gray-50">
-        <div class="flex justify-between text-sm text-gray-500">
+      <div class="px-4 py-3 border-t border-gray-700 bg-gray-700">
+        <div class="flex justify-between text-sm text-gray-400">
           <span><%= pres.viewCount %> views</span>
           <span><%= new Date(pres.createdAt).toLocaleDateString() %></span>
         </div>
       </div>
 
       <!-- Actions -->
-      <div class="px-4 py-3 border-t border-gray-200 flex justify-between items-center">
+      <div class="px-4 py-3 border-t border-gray-700 flex justify-between items-center">
         <div class="flex items-center space-x-2">
           <a href="/p/<%= pres.slug %>" target="_blank"
-             class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center">
+             class="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
             </svg>
             View
           </a>
           <button onclick="copyLink('/p/<%= pres.slug %>')"
-                  class="text-gray-500 hover:text-gray-700 text-sm flex items-center">
+                  class="text-gray-400 hover:text-gray-300 text-sm flex items-center">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
             </svg>
@@ -87,11 +87,11 @@
         </div>
         <div class="flex items-center space-x-2">
           <form action="/admin/presentations/<%= pres._id %>/duplicate" method="POST" class="inline">
-            <button type="submit" class="text-gray-500 hover:text-gray-700 text-sm">Duplicate</button>
+            <button type="submit" class="text-gray-400 hover:text-gray-300 text-sm">Duplicate</button>
           </form>
-          <a href="/admin/presentations/<%= pres._id %>/edit" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">Edit</a>
+          <a href="/admin/presentations/<%= pres._id %>/edit" class="text-spindle-400 hover:text-spindle-300 text-sm font-medium">Edit</a>
           <form action="/admin/presentations/<%= pres._id %>/delete" method="POST" class="inline" onsubmit="return confirm('Delete this presentation?')">
-            <button type="submit" class="text-red-600 hover:text-red-700 text-sm">Delete</button>
+            <button type="submit" class="text-red-400 hover:text-red-300 text-sm">Delete</button>
           </form>
         </div>
       </div>
@@ -99,13 +99,13 @@
   <% }); %>
 
   <% if (presentations.length === 0) { %>
-    <div class="col-span-full bg-white rounded-lg shadow p-12 text-center">
-      <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="col-span-full bg-gray-800 rounded-lg shadow p-12 text-center">
+      <svg class="w-12 h-12 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
       </svg>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">No presentations yet</h3>
-      <p class="text-gray-500 mb-4">Create your first client presentation</p>
-      <a href="/admin/presentations/new" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+      <h3 class="text-lg font-medium text-white mb-2">No presentations yet</h3>
+      <p class="text-gray-400 mb-4">Create your first client presentation</p>
+      <a href="/admin/presentations/new" class="inline-flex items-center px-4 py-2 bg-spindle-600 text-white rounded-lg hover:bg-spindle-700">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
         </svg>
@@ -121,7 +121,7 @@
     <nav class="flex items-center space-x-2">
       <% for (let i = 1; i <= pagination.totalPages; i++) { %>
         <a href="/admin/presentations?page=<%= i %>"
-           class="px-3 py-2 rounded-lg <%= pagination.page === i ? 'bg-red-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100' %>">
+           class="px-3 py-2 rounded-lg <%= pagination.page === i ? 'bg-spindle-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700' %>">
           <%= i %>
         </a>
       <% } %>

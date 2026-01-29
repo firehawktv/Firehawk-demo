@@ -1,6 +1,6 @@
-# Firehawk Video CRM
+# Firehawk Video CMS
 
-A custom CRM for managing video presentations with Mux.com integration. Features a responsive video grid/reel layout and a full admin dashboard for CRUD operations.
+A custom CMS for managing video presentations with Mux.com integration. Features a responsive video grid/reel layout and a full admin dashboard for CRUD operations.
 
 ## Features
 

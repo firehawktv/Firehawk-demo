@@ -3,10 +3,10 @@
 <!-- Header -->
 <div class="flex justify-between items-center mb-6">
   <div>
-    <h1 class="text-3xl font-bold text-gray-900">Videos</h1>
-    <p class="mt-1 text-gray-600"><%= pagination.total %> videos in library</p>
+    <h1 class="text-3xl font-bold text-white">Videos</h1>
+    <p class="mt-1 text-gray-400"><%= pagination.total %> videos in library</p>
   </div>
-  <a href="/admin/videos/new" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center">
+  <a href="/admin/videos/new" class="bg-spindle-600 text-white px-4 py-2 rounded-lg hover:bg-spindle-700 transition-colors flex items-center">
     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
     </svg>
@@ -19,23 +19,23 @@
   <% const msg = typeof success !== 'undefined' ? success : (typeof error !== 'undefined' ? error : ''); %>
   <% const isError = typeof error !== 'undefined'; %>
   <% if (msg) { %>
-    <div class="mb-6 p-4 rounded-lg <%= isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' %>">
+    <div class="mb-6 p-4 rounded-lg <%= isError ? 'bg-red-900 text-red-300' : 'bg-green-900 text-green-300' %>">
       <%= msg %>
     </div>
   <% } %>
 <% } %>
 
 <!-- Filters -->
-<div class="bg-white rounded-lg shadow mb-6 p-4">
+<div class="bg-gray-800 rounded-lg shadow mb-6 p-4">
   <form method="GET" action="/admin/videos" class="flex flex-wrap gap-4">
     <div class="flex-1 min-w-[200px]">
-      <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+      <label class="block text-sm font-medium text-gray-300 mb-1">Search</label>
       <input type="text" name="search" value="<%= filters.search || '' %>" placeholder="Search videos..."
-        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500">
+        class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400">
     </div>
     <div class="w-48">
-      <label class="block text-sm font-medium text-gray-700 mb-1">Client</label>
-      <select name="client" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500">
+      <label class="block text-sm font-medium text-gray-300 mb-1">Client</label>
+      <select name="client" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500">
         <option value="">All Clients</option>
         <% clients.forEach(function(c) { %>
           <option value="<%= c %>" <%= filters.client === c ? 'selected' : '' %>><%= c %></option>
@@ -43,8 +43,8 @@
       </select>
     </div>
     <div class="w-48">
-      <label class="block text-sm font-medium text-gray-700 mb-1">Tag</label>
-      <select name="tag" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500">
+      <label class="block text-sm font-medium text-gray-300 mb-1">Tag</label>
+      <select name="tag" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500">
         <option value="">All Tags</option>
         <% tags.forEach(function(t) { %>
           <option value="<%= t %>" <%= filters.tag === t ? 'selected' : '' %>><%= t %></option>
@@ -52,67 +52,67 @@
       </select>
     </div>
     <div class="flex items-end">
-      <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Filter</button>
+      <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500">Filter</button>
     </div>
   </form>
 </div>
 
 <!-- Videos Table -->
-<div class="bg-white rounded-lg shadow overflow-hidden">
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead class="bg-gray-50">
+<div class="bg-gray-800 rounded-lg shadow overflow-hidden">
+  <table class="min-w-full divide-y divide-gray-700">
+    <thead class="bg-gray-700">
       <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Video</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Video</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Client</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Project</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tags</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
       </tr>
     </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
+    <tbody class="bg-gray-800 divide-y divide-gray-700">
       <% videos.forEach(function(video) { %>
-        <tr class="hover:bg-gray-50">
+        <tr class="hover:bg-gray-700">
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
-              <div class="flex-shrink-0 h-16 w-24 bg-gray-200 rounded overflow-hidden">
+              <div class="flex-shrink-0 h-16 w-24 bg-gray-700 rounded overflow-hidden">
                 <img src="https://image.mux.com/<%= video.embedId %>/thumbnail.jpg?width=160"
                      alt="<%= video.title || video.project %>"
                      class="h-full w-full object-cover"
                      onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%239ca3af%22%3E%3Cpath d=%22M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z%22/%3E%3C/svg%3E'">
               </div>
               <div class="ml-4">
-                <div class="text-sm font-medium text-gray-900"><%= video.title || video.project %></div>
-                <div class="text-sm text-gray-500 font-mono"><%= video.embedId %></div>
+                <div class="text-sm font-medium text-white"><%= video.title || video.project %></div>
+                <div class="text-sm text-gray-400 font-mono"><%= video.embedId %></div>
               </div>
             </div>
           </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= video.client %></td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= video.project %></td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-white"><%= video.client %></td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400"><%= video.project %></td>
           <td class="px-6 py-4">
             <div class="flex flex-wrap gap-1">
               <% video.tags.forEach(function(tag) { %>
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"><%= tag %></span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-700 text-gray-300"><%= tag %></span>
               <% }); %>
             </div>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= video.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= video.isActive ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-400' %>">
               <%= video.isActive ? 'Active' : 'Inactive' %>
             </span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <a href="/admin/videos/<%= video._id %>/edit" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</a>
+            <a href="/admin/videos/<%= video._id %>/edit" class="text-spindle-400 hover:text-spindle-300 mr-4">Edit</a>
             <form action="/admin/videos/<%= video._id %>/delete" method="POST" class="inline" onsubmit="return confirm('Delete this video?')">
-              <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+              <button type="submit" class="text-red-400 hover:text-red-300">Delete</button>
             </form>
           </td>
         </tr>
       <% }); %>
       <% if (videos.length === 0) { %>
         <tr>
-          <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-            No videos found. <a href="/admin/videos/new" class="text-red-600 hover:text-red-700">Add your first video</a>
+          <td colspan="6" class="px-6 py-12 text-center text-gray-400">
+            No videos found. <a href="/admin/videos/new" class="text-spindle-400 hover:text-spindle-300">Add your first video</a>
           </td>
         </tr>
       <% } %>
@@ -126,7 +126,7 @@
     <nav class="flex items-center space-x-2">
       <% for (let i = 1; i <= pagination.totalPages; i++) { %>
         <a href="/admin/videos?page=<%= i %>&client=<%= encodeURIComponent(filters.client || '') %>&tag=<%= encodeURIComponent(filters.tag || '') %>&search=<%= encodeURIComponent(filters.search || '') %>"
-           class="px-3 py-2 rounded-lg <%= pagination.page === i ? 'bg-red-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100' %>">
+           class="px-3 py-2 rounded-lg <%= pagination.page === i ? 'bg-spindle-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700' %>">
           <%= i %>
         </a>
       <% } %>

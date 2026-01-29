@@ -31,7 +31,7 @@ app.use('/p', require('./routes/presentation'));
 
 // Home page
 app.get('/', (req, res) => {
-  res.render('index', { title: 'Firehawk Video CRM' });
+  res.render('index', { title: 'Firehawk Video CMS' });
 });
 
 // Error handling

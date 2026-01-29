@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/@mux/mux-player"></script>
   <style>
     :root {
-      --accent-color: <%= presentation.primaryColor || '#ef4444' %>;
+      --accent-color: <%= presentation.primaryColor || '#6a94c7' %>;
       --bg-color: <%= presentation.theme === 'light' ? '#ffffff' : '#111827' %>;
       --text-color: <%= presentation.theme === 'light' ? '#111827' : '#ffffff' %>;
       --text-muted: <%= presentation.theme === 'light' ? '#6b7280' : '#9ca3af' %>;
@@ -106,7 +106,7 @@
               <mux-player
                 playback-id="<%= videos[0].embedId %>"
                 metadata-video-title="<%= videos[0].title || videos[0].project %>"
-                accent-color="<%= presentation.primaryColor || '#ef4444' %>"
+                accent-color="<%= presentation.primaryColor || '#6a94c7' %>"
                 style="width: 100%; height: 100%;"
               ></mux-player>
             <% } %>
@@ -207,7 +207,7 @@
         <mux-player
           playback-id="${video.embedId}"
           metadata-video-title="${video.title}"
-          accent-color="<%= presentation.primaryColor || '#ef4444' %>"
+          accent-color="<%= presentation.primaryColor || '#6a94c7' %>"
           autoplay
           style="width: 100%; height: 100%;"
         ></mux-player>

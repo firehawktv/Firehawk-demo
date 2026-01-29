@@ -15,7 +15,7 @@
 
   /* Better focus styles */
   :focus-visible {
-    @apply outline-none ring-2 ring-red-500 ring-offset-2;
+    @apply outline-none ring-2 ring-spindle-500 ring-offset-2;
   }
 }
 
@@ -23,11 +23,11 @@
 @layer components {
   /* Form input styles */
   .form-input {
-    @apply w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500 transition-colors;
+    @apply w-full border border-gray-600 rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 transition-colors;
   }
 
   .form-input:focus {
-    @apply outline-none ring-2 ring-red-500 ring-offset-0;
+    @apply outline-none ring-2 ring-spindle-500 ring-offset-0;
   }
 
   /* Button styles */
@@ -36,7 +36,7 @@
   }
 
   .btn-primary {
-    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+    @apply bg-spindle-600 text-white hover:bg-spindle-700 focus:ring-spindle-500;
   }
 
   .btn-secondary {
@@ -44,12 +44,12 @@
   }
 
   .btn-outline {
-    @apply border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
+    @apply border border-gray-600 text-gray-300 hover:bg-gray-700 focus:ring-gray-500;
   }
 
   /* Card styles */
   .card {
-    @apply bg-white rounded-lg shadow;
+    @apply bg-gray-800 rounded-lg shadow;
   }
 
   .card-dark {

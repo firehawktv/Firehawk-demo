@@ -2,23 +2,23 @@
 
 <!-- Header -->
 <div class="mb-6">
-  <a href="/admin/presentations" class="text-gray-600 hover:text-gray-900 flex items-center mb-4">
+  <a href="/admin/presentations" class="text-gray-400 hover:text-white flex items-center mb-4">
     <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
     </svg>
     Back to Presentations
   </a>
-  <h1 class="text-3xl font-bold text-gray-900"><%= presentation ? 'Edit Presentation' : 'Create Presentation' %></h1>
+  <h1 class="text-3xl font-bold text-white"><%= presentation ? 'Edit Presentation' : 'Create Presentation' %></h1>
   <% if (presentation) { %>
-    <p class="mt-2 text-gray-600">
-      Public URL: <a href="/p/<%= presentation.slug %>" target="_blank" class="text-blue-600 hover:underline">/p/<%= presentation.slug %></a>
+    <p class="mt-2 text-gray-400">
+      Public URL: <a href="/p/<%= presentation.slug %>" target="_blank" class="text-blue-400 hover:underline">/p/<%= presentation.slug %></a>
     </p>
   <% } %>
 </div>
 
 <!-- Error Message -->
 <% if (typeof error !== 'undefined' && error) { %>
-  <div class="mb-6 p-4 rounded-lg bg-red-100 text-red-700">
+  <div class="mb-6 p-4 rounded-lg bg-red-900 text-red-300">
     <%= error %>
   </div>
 <% } %>
@@ -31,39 +31,39 @@
     <div class="lg:col-span-2 space-y-6">
 
       <!-- Client Info -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">Client Information</h2>
+      <div class="bg-gray-800 rounded-lg shadow p-6">
+        <h2 class="text-lg font-medium text-white mb-4">Client Information</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label for="client" class="block text-sm font-medium text-gray-700 mb-1">Client Name *</label>
+            <label for="client" class="block text-sm font-medium text-gray-300 mb-1">Client Name *</label>
             <input type="text" name="client" id="client" required
                    value="<%= presentation ? presentation.client : '' %>"
-                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500"
+                   class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400"
                    placeholder="Company or client name">
           </div>
 
           <div>
-            <label for="clientLogo" class="block text-sm font-medium text-gray-700 mb-1">Client Logo URL</label>
+            <label for="clientLogo" class="block text-sm font-medium text-gray-300 mb-1">Client Logo URL</label>
             <input type="url" name="clientLogo" id="clientLogo"
                    value="<%= presentation ? (presentation.clientLogo || '') : '' %>"
-                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500"
+                   class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400"
                    placeholder="https://example.com/logo.png">
           </div>
         </div>
 
         <div class="mt-4">
-          <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+          <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Message</label>
           <textarea name="message" id="message" rows="4"
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500"
+                    class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400"
                     placeholder="Personal message for the client..."><%= presentation ? (presentation.message || '') : '' %></textarea>
         </div>
       </div>
 
       <!-- Video Selection -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">Select Videos</h2>
-        <p class="text-sm text-gray-500 mb-4">Choose 3-6 videos for this presentation. Drag to reorder.</p>
+      <div class="bg-gray-800 rounded-lg shadow p-6">
+        <h2 class="text-lg font-medium text-white mb-4">Select Videos</h2>
+        <p class="text-sm text-gray-400 mb-4">Choose 3-6 videos for this presentation. Drag to reorder.</p>
 
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto" id="video-grid">
           <% videos.forEach(function(video) { %>
@@ -72,21 +72,21 @@
               <input type="checkbox" name="videos" value="<%= video._id %>"
                      <%= isSelected ? 'checked' : '' %>
                      class="sr-only peer">
-              <div class="border-2 rounded-lg overflow-hidden peer-checked:border-red-500 peer-checked:ring-2 peer-checked:ring-red-200 border-gray-200 hover:border-gray-300 transition-colors">
-                <div class="aspect-video bg-gray-200 relative">
+              <div class="border-2 rounded-lg overflow-hidden peer-checked:border-spindle-500 peer-checked:ring-2 peer-checked:ring-spindle-700 border-gray-600 hover:border-gray-500 transition-colors">
+                <div class="aspect-video bg-gray-700 relative">
                   <img src="https://image.mux.com/<%= video.embedId %>/thumbnail.jpg?width=320"
                        alt="<%= video.title || video.project %>"
                        class="w-full h-full object-cover"
                        onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%239ca3af%22%3E%3Cpath d=%22M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z%22/%3E%3C/svg%3E'">
-                  <div class="absolute inset-0 bg-red-500 bg-opacity-0 peer-checked:bg-opacity-20 flex items-center justify-center">
+                  <div class="absolute inset-0 bg-spindle-500 bg-opacity-0 peer-checked:bg-opacity-20 flex items-center justify-center">
                     <svg class="w-8 h-8 text-white opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                     </svg>
                   </div>
                 </div>
-                <div class="p-2">
-                  <p class="text-sm font-medium text-gray-900 truncate"><%= video.title || video.project %></p>
-                  <p class="text-xs text-gray-500 truncate"><%= video.client %></p>
+                <div class="p-2 bg-gray-700">
+                  <p class="text-sm font-medium text-white truncate"><%= video.title || video.project %></p>
+                  <p class="text-xs text-gray-400 truncate"><%= video.client %></p>
                 </div>
               </div>
             </label>
@@ -94,8 +94,8 @@
         </div>
 
         <% if (videos.length === 0) { %>
-          <div class="text-center py-8 text-gray-500">
-            <p>No videos available. <a href="/admin/videos/new" class="text-red-600 hover:underline">Add videos first</a></p>
+          <div class="text-center py-8 text-gray-400">
+            <p>No videos available. <a href="/admin/videos/new" class="text-spindle-400 hover:underline">Add videos first</a></p>
           </div>
         <% } %>
       </div>
@@ -106,66 +106,66 @@
     <div class="space-y-6">
 
       <!-- Layout Options -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">Layout</h2>
+      <div class="bg-gray-800 rounded-lg shadow p-6">
+        <h2 class="text-lg font-medium text-white mb-4">Layout</h2>
 
         <div class="space-y-3">
-          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 <%= (!presentation || presentation.layout === 'grid') ? 'border-red-500 bg-red-50' : 'border-gray-200' %>">
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-700 <%= (!presentation || presentation.layout === 'grid') ? 'border-spindle-500 bg-spindle-950' : 'border-gray-600' %>">
             <input type="radio" name="layout" value="grid"
                    <%= (!presentation || presentation.layout === 'grid') ? 'checked' : '' %>
-                   class="text-red-600 focus:ring-red-500">
+                   class="text-spindle-600 focus:ring-spindle-500 bg-gray-700 border-gray-600">
             <div class="ml-3">
-              <span class="text-sm font-medium text-gray-900">Grid</span>
-              <p class="text-xs text-gray-500">3-6 videos in a responsive grid</p>
+              <span class="text-sm font-medium text-white">Grid</span>
+              <p class="text-xs text-gray-400">3-6 videos in a responsive grid</p>
             </div>
           </label>
 
-          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 <%= (presentation && presentation.layout === 'reel') ? 'border-red-500 bg-red-50' : 'border-gray-200' %>">
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-700 <%= (presentation && presentation.layout === 'reel') ? 'border-spindle-500 bg-spindle-950' : 'border-gray-600' %>">
             <input type="radio" name="layout" value="reel"
                    <%= (presentation && presentation.layout === 'reel') ? 'checked' : '' %>
-                   class="text-red-600 focus:ring-red-500">
+                   class="text-spindle-600 focus:ring-spindle-500 bg-gray-700 border-gray-600">
             <div class="ml-3">
-              <span class="text-sm font-medium text-gray-900">Reel</span>
-              <p class="text-xs text-gray-500">Large player with thumbnail row</p>
+              <span class="text-sm font-medium text-white">Reel</span>
+              <p class="text-xs text-gray-400">Large player with thumbnail row</p>
             </div>
           </label>
         </div>
       </div>
 
       <!-- Theme Options -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">Theme</h2>
+      <div class="bg-gray-800 rounded-lg shadow p-6">
+        <h2 class="text-lg font-medium text-white mb-4">Theme</h2>
 
         <div class="space-y-3">
-          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+          <label class="flex items-center p-3 border border-gray-600 rounded-lg cursor-pointer hover:bg-gray-700">
             <input type="radio" name="theme" value="dark"
                    <%= (!presentation || presentation.theme === 'dark') ? 'checked' : '' %>
-                   class="text-red-600 focus:ring-red-500">
+                   class="text-spindle-600 focus:ring-spindle-500 bg-gray-700 border-gray-600">
             <div class="ml-3">
-              <span class="text-sm font-medium text-gray-900">Dark</span>
+              <span class="text-sm font-medium text-white">Dark</span>
             </div>
           </label>
 
-          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+          <label class="flex items-center p-3 border border-gray-600 rounded-lg cursor-pointer hover:bg-gray-700">
             <input type="radio" name="theme" value="light"
                    <%= (presentation && presentation.theme === 'light') ? 'checked' : '' %>
-                   class="text-red-600 focus:ring-red-500">
+                   class="text-spindle-600 focus:ring-spindle-500 bg-gray-700 border-gray-600">
             <div class="ml-3">
-              <span class="text-sm font-medium text-gray-900">Light</span>
+              <span class="text-sm font-medium text-white">Light</span>
             </div>
           </label>
         </div>
 
         <div class="mt-4 space-y-3">
           <div>
-            <label for="primaryColor" class="block text-sm font-medium text-gray-700 mb-1">Accent Color</label>
+            <label for="primaryColor" class="block text-sm font-medium text-gray-300 mb-1">Accent Color</label>
             <div class="flex items-center space-x-2">
               <input type="color" name="primaryColor" id="primaryColor"
-                     value="<%= (presentation && presentation.primaryColor) ? presentation.primaryColor : '#ef4444' %>"
-                     class="h-10 w-16 border border-gray-300 rounded cursor-pointer">
+                     value="<%= (presentation && presentation.primaryColor) ? presentation.primaryColor : '#6a94c7' %>"
+                     class="h-10 w-16 border border-gray-600 rounded cursor-pointer bg-gray-700">
               <input type="text" id="primaryColorText"
-                     value="<%= (presentation && presentation.primaryColor) ? presentation.primaryColor : '#ef4444' %>"
-                     class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono"
+                     value="<%= (presentation && presentation.primaryColor) ? presentation.primaryColor : '#6a94c7' %>"
+                     class="flex-1 bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm font-mono"
                      onchange="document.getElementById('primaryColor').value = this.value">
             </div>
           </div>
@@ -173,36 +173,36 @@
       </div>
 
       <!-- Settings -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">Settings</h2>
+      <div class="bg-gray-800 rounded-lg shadow p-6">
+        <h2 class="text-lg font-medium text-white mb-4">Settings</h2>
 
         <div class="space-y-4">
           <div>
-            <label for="expiresAt" class="block text-sm font-medium text-gray-700 mb-1">Expires On</label>
+            <label for="expiresAt" class="block text-sm font-medium text-gray-300 mb-1">Expires On</label>
             <input type="date" name="expiresAt" id="expiresAt"
                    value="<%= (presentation && presentation.expiresAt) ? new Date(presentation.expiresAt).toISOString().split('T')[0] : '' %>"
-                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500">
-            <p class="mt-1 text-xs text-gray-500">Leave blank for no expiration</p>
+                   class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500">
+            <p class="mt-1 text-xs text-gray-400">Leave blank for no expiration</p>
           </div>
 
           <% if (presentation) { %>
             <div class="flex items-center">
               <input type="checkbox" name="isActive" id="isActive"
                      <%= presentation.isActive ? 'checked' : '' %>
-                     class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
-              <label for="isActive" class="ml-2 text-sm text-gray-700">Active</label>
+                     class="h-4 w-4 text-spindle-600 focus:ring-spindle-500 bg-gray-700 border-gray-600 rounded">
+              <label for="isActive" class="ml-2 text-sm text-gray-300">Active</label>
             </div>
           <% } %>
         </div>
       </div>
 
       <!-- Actions -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-gray-800 rounded-lg shadow p-6">
         <div class="space-y-3">
-          <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium">
+          <button type="submit" class="w-full px-4 py-2 bg-spindle-600 text-white rounded-lg hover:bg-spindle-700 font-medium">
             <%= presentation ? 'Update Presentation' : 'Create Presentation' %>
           </button>
-          <a href="/admin/presentations" class="block w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium text-center">
+          <a href="/admin/presentations" class="block w-full px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 font-medium text-center">
             Cancel
           </a>
         </div>
