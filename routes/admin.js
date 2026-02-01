@@ -48,12 +48,14 @@ router.get('/videos', async (req, res) => {
     const total = await Video.countDocuments(query);
     const clients = await Video.distinct('client');
     const tags = await Video.distinct('tags');
+    const categories = await Video.distinct('category');
 
     res.render('admin/videos/index', {
       title: 'Manage Videos',
       videos,
       clients,
       tags,
+      categories,
       filters: { client, tag, search },
       pagination: {
         page: parseInt(page),
@@ -70,11 +72,13 @@ router.get('/videos', async (req, res) => {
 router.get('/videos/new', async (req, res) => {
   const clients = await Video.distinct('client');
   const tags = await Video.distinct('tags');
+  const categories = await Video.distinct('category');
   res.render('admin/videos/form', {
     title: 'Add Video',
     video: null,
     clients,
     tags,
+    categories,
     action: '/admin/videos',
     method: 'POST'
   });
@@ -83,7 +87,7 @@ router.get('/videos/new', async (req, res) => {
 // Create video
 router.post('/videos', async (req, res) => {
   try {
-    const { client, project, date, tags, embedId, title, description } = req.body;
+    const { client, project, date, tags, embedId, title, description, category } = req.body;
 
     let parsedTags = tags;
     if (typeof tags === 'string') {
@@ -97,7 +101,8 @@ router.post('/videos', async (req, res) => {
       tags: parsedTags,
       embedId,
       title,
-      description
+      description,
+      category: category || null
     });
 
     res.redirect('/admin/videos?success=Video created successfully');
@@ -116,12 +121,14 @@ router.get('/videos/:id/edit', async (req, res) => {
 
     const clients = await Video.distinct('client');
     const tags = await Video.distinct('tags');
+    const categories = await Video.distinct('category');
 
     res.render('admin/videos/form', {
       title: 'Edit Video',
       video,
       clients,
       tags,
+      categories,
       action: `/admin/videos/${video._id}?_method=PUT`,
       method: 'POST'
     });
@@ -133,7 +140,7 @@ router.get('/videos/:id/edit', async (req, res) => {
 // Update video
 router.post('/videos/:id', async (req, res) => {
   try {
-    const { client, project, date, tags, embedId, title, description, isActive } = req.body;
+    const { client, project, date, tags, embedId, title, description, isActive, category } = req.body;
 
     let parsedTags = tags;
     if (typeof tags === 'string') {
@@ -148,7 +155,8 @@ router.post('/videos/:id', async (req, res) => {
       embedId,
       title,
       description,
-      isActive: isActive === 'on' || isActive === 'true'
+      isActive: isActive === 'on' || isActive === 'true',
+      category: category || null
     });
 
     res.redirect('/admin/videos?success=Video updated successfully');

@@ -49,14 +49,21 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Embed ID -->
+      <!-- Category -->
       <div>
-        <label for="embedId" class="block text-sm font-medium text-gray-300 mb-1">Mux Embed ID *</label>
-        <input type="text" name="embedId" id="embedId" required
-               value="<%= video ? video.embedId : '' %>"
-               class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 font-mono placeholder-gray-400"
-               placeholder="e.g., DS00Spx1CV902MCtPj5WknGlR100V0...">
-        <p class="mt-1 text-sm text-gray-400">The playback ID from your Mux dashboard</p>
+        <label for="category" class="block text-sm font-medium text-gray-300 mb-1">Category</label>
+        <input type="text" name="category" id="category"
+               value="<%= video ? (video.category || '') : '' %>"
+               list="category-list"
+               class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400"
+               placeholder="e.g., Commercial, Social, Internal...">
+        <datalist id="category-list">
+          <% categories.forEach(function(cat) { %>
+            <% if (cat) { %>
+              <option value="<%= cat %>">
+            <% } %>
+          <% }); %>
+        </datalist>
       </div>
 
       <!-- Date -->
@@ -66,6 +73,16 @@
                value="<%= video ? new Date(video.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0] %>"
                class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500">
       </div>
+    </div>
+
+    <!-- Embed ID -->
+    <div>
+      <label for="embedId" class="block text-sm font-medium text-gray-300 mb-1">Mux Playback ID *</label>
+      <input type="text" name="embedId" id="embedId" required
+             value="<%= video ? video.embedId : '' %>"
+             class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 font-mono placeholder-gray-400"
+             placeholder="e.g., DS00Spx1CV902MCtPj5WknGlR100V0...">
+      <p class="mt-1 text-sm text-gray-400">The playback ID from your Mux dashboard</p>
     </div>
 
     <!-- Title -->

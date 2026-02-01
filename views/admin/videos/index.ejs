@@ -64,6 +64,7 @@
       <tr>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Video</th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Client</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Category</th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Project</th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tags</th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
@@ -88,6 +89,7 @@
             </div>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-white"><%= video.client %></td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400"><%= video.category || '-' %></td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400"><%= video.project %></td>
           <td class="px-6 py-4">
             <div class="flex flex-wrap gap-1">
@@ -111,7 +113,7 @@
       <% }); %>
       <% if (videos.length === 0) { %>
         <tr>
-          <td colspan="6" class="px-6 py-12 text-center text-gray-400">
+          <td colspan="7" class="px-6 py-12 text-center text-gray-400">
             No videos found. <a href="/admin/videos/new" class="text-spindle-400 hover:text-spindle-300">Add your first video</a>
           </td>
         </tr>
