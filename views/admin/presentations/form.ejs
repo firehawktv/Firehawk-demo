@@ -24,7 +24,7 @@
 <% } %>
 
 <!-- Form -->
-<form action="<%= action %>" method="<%= method %>" class="space-y-6">
+<form action="<%= action %>" method="<%= method %>" enctype="multipart/form-data" class="space-y-6">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     <!-- Main Content -->
@@ -44,11 +44,20 @@
           </div>
 
           <div>
-            <label for="clientLogo" class="block text-sm font-medium text-gray-300 mb-1">Client Logo URL</label>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Client Logo</label>
             <input type="url" name="clientLogo" id="clientLogo"
-                   value="<%= presentation ? (presentation.clientLogo || '') : '' %>"
-                   class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400"
+                   value="<%= presentation ? (presentation.clientLogo && !presentation.clientLogo.startsWith('/uploads') ? presentation.clientLogo : '') : '' %>"
+                   class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400 mb-2"
                    placeholder="https://example.com/logo.png">
+            <div class="text-gray-500 text-xs text-center mb-2">— or upload —</div>
+            <input type="file" name="clientLogoFile" id="clientLogoFile" accept="image/*"
+                   class="w-full text-gray-400 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-700 file:text-gray-300 hover:file:bg-gray-600">
+            <% if (presentation && presentation.clientLogo) { %>
+              <div class="mt-2 flex items-center gap-2">
+                <img src="<%= presentation.clientLogo %>" alt="Current logo" class="h-8 object-contain bg-gray-700 rounded px-2">
+                <span class="text-xs text-gray-400">Current logo</span>
+              </div>
+            <% } %>
           </div>
         </div>
 
@@ -63,41 +72,80 @@
       <!-- Video Selection -->
       <div class="bg-gray-800 rounded-lg shadow p-6">
         <h2 class="text-lg font-medium text-white mb-4">Select Videos</h2>
-        <p class="text-sm text-gray-400 mb-4">Choose 3-6 videos for this presentation. Drag to reorder.</p>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto" id="video-grid">
-          <% videos.forEach(function(video) { %>
-            <% const isSelected = presentation && presentation.videos.some(v => v._id.toString() === video._id.toString()); %>
-            <label class="relative cursor-pointer group">
-              <input type="checkbox" name="videos" value="<%= video._id %>"
-                     <%= isSelected ? 'checked' : '' %>
-                     class="sr-only peer">
-              <div class="border-2 rounded-lg overflow-hidden peer-checked:border-spindle-500 peer-checked:ring-2 peer-checked:ring-spindle-700 border-gray-600 hover:border-gray-500 transition-colors">
-                <div class="aspect-video bg-gray-700 relative">
-                  <img src="https://image.mux.com/<%= video.embedId %>/thumbnail.jpg?width=320"
-                       alt="<%= video.title || video.project %>"
-                       class="w-full h-full object-cover"
-                       onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%239ca3af%22%3E%3Cpath d=%22M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z%22/%3E%3C/svg%3E'">
-                  <div class="absolute inset-0 bg-spindle-500 bg-opacity-0 peer-checked:bg-opacity-20 flex items-center justify-center">
-                    <svg class="w-8 h-8 text-white opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div class="p-2 bg-gray-700">
-                  <p class="text-sm font-medium text-white truncate"><%= video.title || video.project %></p>
-                  <p class="text-xs text-gray-400 truncate"><%= video.client %></p>
-                </div>
-              </div>
-            </label>
-          <% }); %>
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-3 mb-4">
+          <div class="flex-1 min-w-[150px]">
+            <select id="filter-category" onchange="filterVideos()"
+                    class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:ring-spindle-500 focus:border-spindle-500">
+              <option value="">All Categories</option>
+              <% categories.forEach(function(cat) { %>
+                <option value="<%= cat %>"><%= cat %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="flex-1 min-w-[150px]">
+            <select id="filter-tag" onchange="filterVideos()"
+                    class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:ring-spindle-500 focus:border-spindle-500">
+              <option value="">All Skills/Tags</option>
+              <% tags.forEach(function(tag) { %>
+                <option value="<%= tag %>"><%= tag %></option>
+              <% }); %>
+            </select>
+          </div>
+          <button type="button" onclick="clearFilters()" class="px-3 py-2 text-sm text-gray-400 hover:text-white">
+            Clear
+          </button>
         </div>
 
-        <% if (videos.length === 0) { %>
-          <div class="text-center py-8 text-gray-400">
-            <p>No videos available. <a href="/admin/videos/new" class="text-spindle-400 hover:underline">Add videos first</a></p>
+        <!-- Video List -->
+        <div id="video-list" class="space-y-2 max-h-80 overflow-y-auto border border-gray-700 rounded-lg p-2">
+          <% if (videos.length === 0) { %>
+            <div class="text-center py-8 text-gray-400">
+              <p>No videos available. <a href="/admin/videos/new" class="text-spindle-400 hover:underline">Add videos first</a></p>
+            </div>
+          <% } else { %>
+            <% videos.forEach(function(video) { %>
+              <% const isSelected = presentation && presentation.videos.some(v => v._id.toString() === video._id.toString()); %>
+              <label class="video-item flex items-center p-3 rounded-lg cursor-pointer transition-colors
+                            <%= isSelected ? 'bg-spindle-900 border border-spindle-500' : 'bg-gray-700 border border-transparent hover:bg-gray-600' %>"
+                     data-id="<%= video._id %>"
+                     data-category="<%= video.category || '' %>"
+                     data-tags="<%= video.tags.join(',') %>"
+                     data-title="<%= video.title || video.project %>"
+                     data-client="<%= video.client %>"
+                     data-embed="<%= video.embedId %>">
+                <input type="checkbox" name="videos" value="<%= video._id %>"
+                       <%= isSelected ? 'checked' : '' %>
+                       onchange="updateSelectedList()"
+                       class="h-4 w-4 text-spindle-600 focus:ring-spindle-500 bg-gray-600 border-gray-500 rounded">
+                <img src="https://image.mux.com/<%= video.embedId %>/thumbnail.jpg?width=120"
+                     alt="<%= video.title || video.project %>"
+                     class="w-16 h-10 object-cover rounded ml-3"
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%234b5563%22%3E%3Cpath d=%22M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z%22/%3E%3C/svg%3E'">
+                <div class="flex-1 ml-3 min-w-0">
+                  <p class="text-sm font-medium text-white truncate"><%= video.title || video.project %></p>
+                  <p class="text-xs text-gray-400 truncate"><%= video.client %> · <%= video.category || 'Uncategorized' %></p>
+                </div>
+              </label>
+            <% }); %>
+          <% } %>
+        </div>
+
+        <!-- Selected Videos (drag to reorder) -->
+        <div class="mt-4 border-t border-gray-700 pt-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-medium text-gray-300">Selected Videos</h3>
+            <span id="selected-count" class="text-xs text-gray-400">0 selected</span>
           </div>
-        <% } %>
+          <p class="text-xs text-gray-500 mb-3">Drag to reorder. Videos will play in this order.</p>
+          <div id="sortable-selected" class="space-y-2 min-h-[60px] border-2 border-dashed border-gray-700 rounded-lg p-2">
+            <p id="empty-selection" class="text-center py-4 text-gray-500 text-sm">Select videos from the list above</p>
+          </div>
+        </div>
+
+        <!-- Hidden inputs for video order (populated by JS) -->
+        <div id="video-order-inputs"></div>
       </div>
 
     </div>
@@ -213,10 +261,181 @@
   </div>
 </form>
 
+<!-- SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
+// Store video data for selected list
+const videoData = {};
+document.querySelectorAll('.video-item').forEach(item => {
+  videoData[item.dataset.id] = {
+    id: item.dataset.id,
+    title: item.dataset.title,
+    client: item.dataset.client,
+    embed: item.dataset.embed
+  };
+});
+
+// Initialize selected list with pre-checked videos
+const selectedOrder = [];
+<% if (presentation && presentation.videos) { %>
+  <% presentation.videos.forEach(function(v) { %>
+    selectedOrder.push('<%= v._id %>');
+  <% }); %>
+<% } %>
+
+// Filter videos by category/tag
+function filterVideos() {
+  const cat = document.getElementById('filter-category').value.toLowerCase();
+  const tag = document.getElementById('filter-tag').value.toLowerCase();
+
+  document.querySelectorAll('.video-item').forEach(item => {
+    const itemCat = (item.dataset.category || '').toLowerCase();
+    const itemTags = (item.dataset.tags || '').toLowerCase().split(',');
+
+    const matchCat = !cat || itemCat === cat;
+    const matchTag = !tag || itemTags.includes(tag);
+
+    item.style.display = (matchCat && matchTag) ? 'flex' : 'none';
+  });
+}
+
+function clearFilters() {
+  document.getElementById('filter-category').value = '';
+  document.getElementById('filter-tag').value = '';
+  filterVideos();
+}
+
+// Update selected videos list
+function updateSelectedList() {
+  const container = document.getElementById('sortable-selected');
+  const emptyMsg = document.getElementById('empty-selection');
+  const countEl = document.getElementById('selected-count');
+
+  // Get all checked videos
+  const checked = document.querySelectorAll('input[name="videos"]:checked');
+  const checkedIds = Array.from(checked).map(cb => cb.value);
+
+  // Update order: keep existing order, add new ones at end, remove unchecked
+  const newOrder = selectedOrder.filter(id => checkedIds.includes(id));
+  checkedIds.forEach(id => {
+    if (!newOrder.includes(id)) newOrder.push(id);
+  });
+  selectedOrder.length = 0;
+  selectedOrder.push(...newOrder);
+
+  // Update count
+  countEl.textContent = `${selectedOrder.length} selected`;
+
+  // Clear container
+  container.innerHTML = '';
+
+  if (selectedOrder.length === 0) {
+    container.innerHTML = '<p id="empty-selection" class="text-center py-4 text-gray-500 text-sm">Select videos from the list above</p>';
+    return;
+  }
+
+  // Build selected items
+  selectedOrder.forEach((id, index) => {
+    const video = videoData[id];
+    if (!video) return;
+
+    const div = document.createElement('div');
+    div.className = 'selected-item flex items-center p-2 bg-gray-700 rounded-lg';
+    div.dataset.id = id;
+    div.innerHTML = `
+      <span class="drag-handle cursor-move text-gray-500 mr-2 text-lg">⋮⋮</span>
+      <span class="text-gray-400 text-sm mr-3 w-6">${index + 1}</span>
+      <img src="https://image.mux.com/${video.embed}/thumbnail.jpg?width=80"
+           class="w-12 h-8 object-cover rounded"
+           onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%234b5563%22%3E%3Cpath d=%22M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z%22/%3E%3C/svg%3E'">
+      <div class="flex-1 ml-3 min-w-0">
+        <p class="text-sm text-white truncate">${video.title}</p>
+        <p class="text-xs text-gray-400 truncate">${video.client}</p>
+      </div>
+      <button type="button" onclick="removeVideo('${id}')" class="ml-2 text-gray-500 hover:text-red-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    `;
+    container.appendChild(div);
+  });
+
+  updateVideoOrderInputs();
+}
+
+function removeVideo(id) {
+  // Uncheck the checkbox
+  const checkbox = document.querySelector(`input[name="videos"][value="${id}"]`);
+  if (checkbox) checkbox.checked = false;
+
+  // Update the label styling
+  const label = checkbox?.closest('.video-item');
+  if (label) {
+    label.classList.remove('bg-spindle-900', 'border-spindle-500');
+    label.classList.add('bg-gray-700', 'border-transparent');
+  }
+
+  updateSelectedList();
+}
+
+function updateVideoOrderInputs() {
+  const container = document.getElementById('video-order-inputs');
+  container.innerHTML = '';
+
+  // Remove all existing video checkboxes from form submission
+  document.querySelectorAll('input[name="videos"]').forEach(cb => {
+    cb.name = 'videos-temp';
+  });
+
+  // Add hidden inputs in the correct order
+  selectedOrder.forEach(id => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'videos';
+    input.value = id;
+    container.appendChild(input);
+  });
+}
+
+// Initialize SortableJS
+const sortable = new Sortable(document.getElementById('sortable-selected'), {
+  animation: 150,
+  handle: '.drag-handle',
+  ghostClass: 'opacity-50',
+  onEnd: function() {
+    // Update order based on new positions
+    const items = document.querySelectorAll('#sortable-selected .selected-item');
+    selectedOrder.length = 0;
+    items.forEach(item => {
+      selectedOrder.push(item.dataset.id);
+    });
+    updateSelectedList();
+  }
+});
+
 // Sync color inputs
 document.getElementById('primaryColor').addEventListener('input', function() {
   document.getElementById('primaryColorText').value = this.value;
+});
+
+// Update checkbox label styling on change
+document.querySelectorAll('input[name="videos"], input[name="videos-temp"]').forEach(cb => {
+  cb.addEventListener('change', function() {
+    const label = this.closest('.video-item');
+    if (this.checked) {
+      label.classList.remove('bg-gray-700', 'border-transparent');
+      label.classList.add('bg-spindle-900', 'border-spindle-500');
+    } else {
+      label.classList.remove('bg-spindle-900', 'border-spindle-500');
+      label.classList.add('bg-gray-700', 'border-transparent');
+    }
+  });
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  updateSelectedList();
 });
 </script>
 

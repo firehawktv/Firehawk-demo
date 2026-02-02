@@ -1,7 +1,31 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 const Video = require('../models/Video');
 const Presentation = require('../models/Presentation');
+
+// Configure multer for logo uploads
+const storage = multer.diskStorage({
+  destination: './public/uploads/logos',
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|svg|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (extname && mimetype) {
+      return cb(null, true);
+    }
+    cb(new Error('Only image files are allowed'));
+  }
+});
 
 // Admin dashboard
 router.get('/', async (req, res) => {
@@ -213,17 +237,21 @@ router.get('/presentations', async (req, res) => {
 // New presentation form
 router.get('/presentations/new', async (req, res) => {
   const videos = await Video.find({ isActive: true }).sort({ client: 1, createdAt: -1 });
+  const categories = await Video.distinct('category');
+  const tags = await Video.distinct('tags');
   res.render('admin/presentations/form', {
     title: 'Create Presentation',
     presentation: null,
     videos,
+    categories: categories.filter(c => c),
+    tags: tags.filter(t => t),
     action: '/admin/presentations',
     method: 'POST'
   });
 });
 
 // Create presentation
-router.post('/presentations', async (req, res) => {
+router.post('/presentations', upload.single('clientLogoFile'), async (req, res) => {
   try {
     const {
       client,
@@ -243,14 +271,19 @@ router.post('/presentations', async (req, res) => {
       videoIds = videos ? [videos] : [];
     }
 
+    // Use uploaded file path or URL
+    const logoPath = req.file
+      ? `/uploads/logos/${req.file.filename}`
+      : clientLogo;
+
     const presentation = await Presentation.create({
       client,
-      clientLogo,
+      clientLogo: logoPath || null,
       message,
       videos: videoIds,
       layout: layout || 'grid',
       theme: theme || 'dark',
-      primaryColor: primaryColor || '#ef4444',
+      primaryColor: primaryColor || '#6a94c7',
       backgroundColor: backgroundColor || '#111827',
       expiresAt: expiresAt || null
     });
@@ -270,11 +303,15 @@ router.get('/presentations/:id/edit', async (req, res) => {
     }
 
     const videos = await Video.find({ isActive: true }).sort({ client: 1, createdAt: -1 });
+    const categories = await Video.distinct('category');
+    const tags = await Video.distinct('tags');
 
     res.render('admin/presentations/form', {
       title: 'Edit Presentation',
       presentation,
       videos,
+      categories: categories.filter(c => c),
+      tags: tags.filter(t => t),
       action: `/admin/presentations/${presentation._id}`,
       method: 'POST'
     });
@@ -284,7 +321,7 @@ router.get('/presentations/:id/edit', async (req, res) => {
 });
 
 // Update presentation
-router.post('/presentations/:id', async (req, res) => {
+router.post('/presentations/:id', upload.single('clientLogoFile'), async (req, res) => {
   try {
     const {
       client,
@@ -305,9 +342,9 @@ router.post('/presentations/:id', async (req, res) => {
       videoIds = videos ? [videos] : [];
     }
 
-    await Presentation.findByIdAndUpdate(req.params.id, {
+    // Build update object
+    const updateData = {
       client,
-      clientLogo,
       message,
       videos: videoIds,
       layout,
@@ -316,7 +353,16 @@ router.post('/presentations/:id', async (req, res) => {
       backgroundColor,
       expiresAt: expiresAt || null,
       isActive: isActive === 'on' || isActive === 'true'
-    });
+    };
+
+    // Only update logo if new file uploaded or URL provided
+    if (req.file) {
+      updateData.clientLogo = `/uploads/logos/${req.file.filename}`;
+    } else if (clientLogo) {
+      updateData.clientLogo = clientLogo;
+    }
+
+    await Presentation.findByIdAndUpdate(req.params.id, updateData);
 
     res.redirect('/admin/presentations?success=Presentation updated successfully');
   } catch (error) {
