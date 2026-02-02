@@ -47,7 +47,7 @@
       <select name="tag" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500">
         <option value="">All Tags</option>
         <% tags.forEach(function(t) { %>
-          <option value="<%= t %>" <%= filters.tag === t ? 'selected' : '' %>><%= t %></option>
+          <option value="<%= t %>" <%= filters.tag === t ? 'selected' : '' %> style="text-transform: capitalize;"><%= t.charAt(0).toUpperCase() + t.slice(1) %></option>
         <% }); %>
       </select>
     </div>
@@ -89,12 +89,12 @@
             </div>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-white"><%= video.client %></td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400"><%= video.category || '-' %></td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400" style="text-transform: capitalize;"><%= video.category || '-' %></td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400"><%= video.project %></td>
           <td class="px-6 py-4">
             <div class="flex flex-wrap gap-1">
               <% video.tags.forEach(function(tag) { %>
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-700 text-gray-300"><%= tag %></span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-700 text-gray-300" style="text-transform: capitalize;"><%= tag %></span>
               <% }); %>
             </div>
           </td>

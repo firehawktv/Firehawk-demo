@@ -60,7 +60,7 @@
         <datalist id="category-list">
           <% categories.forEach(function(cat) { %>
             <% if (cat) { %>
-              <option value="<%= cat %>">
+              <option value="<%= cat.charAt(0).toUpperCase() + cat.slice(1) %>">
             <% } %>
           <% }); %>
         </datalist>
@@ -115,7 +115,8 @@
           <span class="text-xs text-gray-400 mr-2">Existing tags:</span>
           <% tags.forEach(function(t) { %>
             <button type="button" onclick="addTag('<%= t %>')"
-                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-700 text-gray-300 hover:bg-gray-600 cursor-pointer">
+                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-700 text-gray-300 hover:bg-gray-600 cursor-pointer"
+                    style="text-transform: capitalize;">
               <%= t %>
             </button>
           <% }); %>
