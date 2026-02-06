@@ -15,11 +15,41 @@
           <a href="/admin" class="text-xl font-bold text-spindle-400">Firehawk</a>
           <span class="ml-2 text-gray-400 text-sm">CMS</span>
         </div>
-        <div class="flex items-center space-x-4">
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center space-x-4">
           <a href="/admin" class="<%= currentPath === '/admin' ? 'text-white' : 'text-gray-300 hover:text-white' %> px-3 py-2 text-sm font-medium">Dashboard</a>
           <a href="/admin/videos" class="<%= currentPath.startsWith('/admin/videos') ? 'text-white' : 'text-gray-300 hover:text-white' %> px-3 py-2 text-sm font-medium">Videos</a>
           <a href="/admin/presentations" class="<%= currentPath.startsWith('/admin/presentations') ? 'text-white' : 'text-gray-300 hover:text-white' %> px-3 py-2 text-sm font-medium">Presentations</a>
         </div>
+
+        <!-- Mobile Hamburger Button -->
+        <div class="md:hidden flex items-center">
+          <button type="button" id="mobile-menu-button" class="text-gray-300 hover:text-white p-2 focus:outline-none focus:ring-2 focus:ring-spindle-500 rounded-lg">
+            <span class="sr-only">Open menu</span>
+            <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 border-t border-gray-700">
+      <div class="px-4 py-3 space-y-1">
+        <a href="/admin" class="block px-3 py-2 rounded-lg text-base font-medium <%= currentPath === '/admin' ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+          Dashboard
+        </a>
+        <a href="/admin/videos" class="block px-3 py-2 rounded-lg text-base font-medium <%= currentPath.startsWith('/admin/videos') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+          Videos
+        </a>
+        <a href="/admin/presentations" class="block px-3 py-2 rounded-lg text-base font-medium <%= currentPath.startsWith('/admin/presentations') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+          Presentations
+        </a>
       </div>
     </div>
   </nav>

@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const Video = require('../models/Video');
 const Presentation = require('../models/Presentation');
+const muxService = require('../services/muxService');
 
 // Configure multer for logo uploads
 const storage = multer.diskStorage({
@@ -196,6 +197,35 @@ router.post('/videos/:id/delete', async (req, res) => {
     res.redirect('/admin/videos?success=Video deleted successfully');
   } catch (error) {
     res.redirect(`/admin/videos?error=${encodeURIComponent(error.message)}`);
+  }
+});
+
+// Sync videos from Mux
+router.post('/videos/sync-mux', async (req, res) => {
+  try {
+    // Check if Mux is configured
+    if (!muxService.isConfigured()) {
+      return res.redirect('/admin/videos?error=' + encodeURIComponent('Mux API credentials not configured. Add MUX_TOKEN_ID and MUX_TOKEN_SECRET to your environment.'));
+    }
+
+    // Perform sync
+    const results = await muxService.syncWithDatabase(Video);
+
+    // Build success message
+    let message = `Mux sync complete: ${results.new} new videos added`;
+    if (results.existing > 0) {
+      message += `, ${results.existing} already existed`;
+    }
+    if (results.skipped > 0) {
+      message += `, ${results.skipped} skipped (not ready)`;
+    }
+    if (results.errors.length > 0) {
+      message += `, ${results.errors.length} errors`;
+    }
+
+    res.redirect('/admin/videos?success=' + encodeURIComponent(message));
+  } catch (error) {
+    res.redirect('/admin/videos?error=' + encodeURIComponent('Mux sync failed: ' + error.message));
   }
 });
 
