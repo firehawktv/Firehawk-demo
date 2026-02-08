@@ -136,6 +136,42 @@ router.post('/videos', async (req, res) => {
   }
 });
 
+// Sync videos from Mux (must be before :id routes)
+router.post('/videos/sync-mux', async (req, res) => {
+  console.log('[Mux Sync] Starting sync...');
+  try {
+    // Check if Mux is configured
+    if (!muxService.isConfigured()) {
+      console.log('[Mux Sync] Error: Mux credentials not configured');
+      return res.redirect('/admin/videos?error=' + encodeURIComponent('Mux API credentials not configured. Add MUX_TOKEN_ID and MUX_TOKEN_SECRET to your environment.'));
+    }
+
+    console.log('[Mux Sync] Credentials found, fetching assets from Mux...');
+    // Perform sync
+    const results = await muxService.syncWithDatabase(Video);
+    console.log('[Mux Sync] Results:', results);
+
+    // Build success message
+    let message = `Mux sync complete: ${results.new} new videos added`;
+    if (results.existing > 0) {
+      message += `, ${results.existing} already existed`;
+    }
+    if (results.skipped > 0) {
+      message += `, ${results.skipped} skipped (not ready)`;
+    }
+    if (results.errors.length > 0) {
+      console.log('[Mux Sync] Errors:', results.errors);
+      message += `, ${results.errors.length} errors`;
+    }
+
+    console.log('[Mux Sync] Success:', message);
+    res.redirect('/admin/videos?success=' + encodeURIComponent(message));
+  } catch (error) {
+    console.error('[Mux Sync] Failed:', error);
+    res.redirect('/admin/videos?error=' + encodeURIComponent('Mux sync failed: ' + error.message));
+  }
+});
+
 // Edit video form
 router.get('/videos/:id/edit', async (req, res) => {
   try {
@@ -197,35 +233,6 @@ router.post('/videos/:id/delete', async (req, res) => {
     res.redirect('/admin/videos?success=Video deleted successfully');
   } catch (error) {
     res.redirect(`/admin/videos?error=${encodeURIComponent(error.message)}`);
-  }
-});
-
-// Sync videos from Mux
-router.post('/videos/sync-mux', async (req, res) => {
-  try {
-    // Check if Mux is configured
-    if (!muxService.isConfigured()) {
-      return res.redirect('/admin/videos?error=' + encodeURIComponent('Mux API credentials not configured. Add MUX_TOKEN_ID and MUX_TOKEN_SECRET to your environment.'));
-    }
-
-    // Perform sync
-    const results = await muxService.syncWithDatabase(Video);
-
-    // Build success message
-    let message = `Mux sync complete: ${results.new} new videos added`;
-    if (results.existing > 0) {
-      message += `, ${results.existing} already existed`;
-    }
-    if (results.skipped > 0) {
-      message += `, ${results.skipped} skipped (not ready)`;
-    }
-    if (results.errors.length > 0) {
-      message += `, ${results.errors.length} errors`;
-    }
-
-    res.redirect('/admin/videos?success=' + encodeURIComponent(message));
-  } catch (error) {
-    res.redirect('/admin/videos?error=' + encodeURIComponent('Mux sync failed: ' + error.message));
   }
 });
 
