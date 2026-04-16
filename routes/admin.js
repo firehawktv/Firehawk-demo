@@ -98,12 +98,14 @@ router.get('/videos/new', async (req, res) => {
   const clients = await Video.distinct('client');
   const tags = await Video.distinct('tags');
   const categories = await Video.distinct('category');
+  const agencies = await Video.distinct('agency');
   res.render('admin/videos/form', {
     title: 'Add Video',
     video: null,
     clients,
     tags,
     categories,
+    agencies,
     action: '/admin/videos',
     method: 'POST'
   });
@@ -112,7 +114,7 @@ router.get('/videos/new', async (req, res) => {
 // Create video
 router.post('/videos', async (req, res) => {
   try {
-    const { client, project, date, tags, embedId, title, description, category } = req.body;
+    const { client, project, date, tags, embedId, title, description, category, agency } = req.body;
 
     let parsedTags = tags;
     if (typeof tags === 'string') {
@@ -127,7 +129,8 @@ router.post('/videos', async (req, res) => {
       embedId,
       title,
       description,
-      category: category || null
+      category: category || null,
+      agency: agency || null
     });
 
     res.redirect('/admin/videos?success=Video created successfully');
@@ -183,6 +186,7 @@ router.get('/videos/:id/edit', async (req, res) => {
     const clients = await Video.distinct('client');
     const tags = await Video.distinct('tags');
     const categories = await Video.distinct('category');
+    const agencies = await Video.distinct('agency');
 
     res.render('admin/videos/form', {
       title: 'Edit Video',
@@ -190,6 +194,7 @@ router.get('/videos/:id/edit', async (req, res) => {
       clients,
       tags,
       categories,
+      agencies,
       action: `/admin/videos/${video._id}?_method=PUT`,
       method: 'POST'
     });
@@ -201,7 +206,7 @@ router.get('/videos/:id/edit', async (req, res) => {
 // Update video
 router.post('/videos/:id', async (req, res) => {
   try {
-    const { client, project, date, tags, embedId, title, description, isActive, category } = req.body;
+    const { client, project, date, tags, embedId, title, description, isActive, category, agency } = req.body;
 
     let parsedTags = tags;
     if (typeof tags === 'string') {
@@ -217,7 +222,8 @@ router.post('/videos/:id', async (req, res) => {
       title,
       description,
       isActive: isActive === 'on' || isActive === 'true',
-      category: category || null
+      category: category || null,
+      agency: agency || null
     });
 
     res.redirect('/admin/videos?success=Video updated successfully');

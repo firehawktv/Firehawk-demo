@@ -88,8 +88,8 @@
         <div class="text-white font-medium truncate" title="<%= video.title || video.project %>">
           <%= video.title || video.project %>
         </div>
-        <div class="text-gray-400 text-sm truncate" title="<%= video.client %>">
-          <%= video.client %>
+        <div class="text-gray-400 text-sm truncate" title="<%= video.client %><%= video.agency ? ' · ' + video.agency : '' %>">
+          <%= video.client %><% if (video.agency) { %> <span class="text-gray-500">· <%= video.agency %></span><% } %>
         </div>
         <% if (video.category) { %>
           <div class="flex flex-wrap gap-1 mt-1">

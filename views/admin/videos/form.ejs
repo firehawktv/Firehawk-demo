@@ -29,6 +29,7 @@
         <input type="text" name="client" id="client" required
                value="<%= video ? video.client : '' %>"
                list="client-list"
+               autocomplete="off"
                class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400"
                placeholder="Client name">
         <datalist id="client-list">
@@ -49,12 +50,31 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Agency -->
+      <div>
+        <label for="agency" class="block text-sm font-medium text-gray-300 mb-1">Agency</label>
+        <input type="text" name="agency" id="agency"
+               value="<%= video ? (video.agency || '') : '' %>"
+               list="agency-list"
+               autocomplete="off"
+               class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400"
+               placeholder="Agency name (optional)">
+        <datalist id="agency-list">
+          <% agencies.forEach(function(a) { %>
+            <% if (a) { %>
+              <option value="<%= a %>">
+            <% } %>
+          <% }); %>
+        </datalist>
+      </div>
+
       <!-- Category -->
       <div>
         <label for="category" class="block text-sm font-medium text-gray-300 mb-1">Category</label>
         <input type="text" name="category" id="category"
                value="<%= video ? (video.category || '') : '' %>"
                list="category-list"
+               autocomplete="off"
                class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400"
                placeholder="e.g., Commercial, Social, Internal...">
         <datalist id="category-list">
@@ -65,7 +85,6 @@
           <% }); %>
         </datalist>
       </div>
-
       <!-- Date -->
       <div>
         <label for="date" class="block text-sm font-medium text-gray-300 mb-1">Date</label>

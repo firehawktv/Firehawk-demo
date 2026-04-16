@@ -27,6 +27,11 @@ const VideoSchema = new mongoose.Schema({
     trim: true,
     unique: true
   },
+  agency: {
+    type: String,
+    trim: true,
+    index: true
+  },
   category: {
     type: String,
     trim: true,
