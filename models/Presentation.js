@@ -73,17 +73,17 @@ const PresentationSchema = new mongoose.Schema({
 });
 
 // Generate unique slug before saving
-PresentationSchema.pre('save', function(next) {
+PresentationSchema.pre('save', async function() {
   if (!this.slug) {
-    // Generate a URL-friendly slug: client-name-random
-    const clientSlug = this.client
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-    const randomPart = crypto.randomBytes(4).toString('hex');
-    this.slug = `${clientSlug}-${randomPart}`;
+    const baseSlug = this.client.toLowerCase().replace(/[^a-z0-9]+/g, '');
+    let slug = baseSlug;
+    let counter = 2;
+    while (await mongoose.model('Presentation').exists({ slug, _id: { $ne: this._id } })) {
+      slug = `${baseSlug}${counter}`;
+      counter++;
+    }
+    this.slug = slug;
   }
-  next();
 });
 
 // Method to check if presentation is expired

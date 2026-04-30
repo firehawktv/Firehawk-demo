@@ -2,9 +2,49 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
+const bcrypt = require('bcryptjs');
 const Video = require('../models/Video');
 const Presentation = require('../models/Presentation');
 const muxService = require('../services/muxService');
+
+// ==================== AUTH ====================
+
+function requireAuth(req, res, next) {
+  if (req.session && req.session.authenticated) return next();
+  res.redirect('/admin/login');
+}
+
+// Protect all routes except /login
+router.use((req, res, next) => {
+  if (req.path === '/login') return next();
+  requireAuth(req, res, next);
+});
+
+// GET /admin/login
+router.get('/login', (req, res) => {
+  if (req.session && req.session.authenticated) return res.redirect('/admin');
+  res.render('admin/login', { title: 'Login', error: req.query.error });
+});
+
+// POST /admin/login
+router.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  const validUser = username === process.env.ADMIN_USERNAME;
+  const validPass = process.env.ADMIN_PASSWORD_HASH
+    ? await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH)
+    : false;
+
+  if (validUser && validPass) {
+    req.session.authenticated = true;
+    return res.redirect('/admin');
+  }
+  res.redirect('/admin/login?error=Invalid+username+or+password');
+});
+
+// POST /admin/logout
+router.post('/logout', (req, res) => {
+  req.session.destroy(() => res.redirect('/admin/login'));
+});
 
 // Configure multer for logo uploads
 const storage = multer.diskStorage({

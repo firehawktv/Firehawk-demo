@@ -21,6 +21,9 @@
           <a href="/admin" class="<%= currentPath === '/admin' ? 'text-white' : 'text-gray-300 hover:text-white' %> px-3 py-2 text-sm font-medium">Dashboard</a>
           <a href="/admin/videos" class="<%= currentPath.startsWith('/admin/videos') ? 'text-white' : 'text-gray-300 hover:text-white' %> px-3 py-2 text-sm font-medium">Videos</a>
           <a href="/admin/presentations" class="<%= currentPath.startsWith('/admin/presentations') ? 'text-white' : 'text-gray-300 hover:text-white' %> px-3 py-2 text-sm font-medium">Presentations</a>
+          <form action="/admin/logout" method="POST" class="inline">
+            <button type="submit" class="text-gray-400 hover:text-white px-3 py-2 text-sm font-medium">Logout</button>
+          </form>
         </div>
 
         <!-- Mobile Hamburger Button -->
@@ -50,6 +53,11 @@
         <a href="/admin/presentations" class="block px-3 py-2 rounded-lg text-base font-medium <%= currentPath.startsWith('/admin/presentations') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
           Presentations
         </a>
+        <form action="/admin/logout" method="POST">
+          <button type="submit" class="w-full text-left px-3 py-2 rounded-lg text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+            Logout
+          </button>
+        </form>
       </div>
     </div>
   </nav>

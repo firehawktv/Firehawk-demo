@@ -303,6 +303,33 @@ chmod +x /home/firehawk/deploy.sh
 
 ---
 
+## Setting Up Admin Credentials
+
+The admin panel requires a username and bcrypt-hashed password stored in `.env`. Run these once on your local machine (or the server) to generate them:
+
+**1. Generate a session secret:**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+Copy the output into `SESSION_SECRET` in your `.env`.
+
+**2. Generate a hashed password:**
+```bash
+node -e "require('bcryptjs').hash('yourpassword', 12).then(h => console.log(h))"
+```
+Replace `yourpassword` with your actual password. Copy the output (starting with `$2a$...`) into `ADMIN_PASSWORD_HASH`.
+
+**3. Add to `.env`:**
+```env
+SESSION_SECRET=<output from step 1>
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD_HASH=<output from step 2>
+```
+
+Then reload the app: `pm2 reload firehawk`
+
+---
+
 ## Environment Variables Reference
 
 | Variable | Required | Description |
@@ -310,6 +337,9 @@ chmod +x /home/firehawk/deploy.sh
 | `PORT` | No | Port Node.js listens on. Default: `3000`. nginx proxies to this. |
 | `NODE_ENV` | Yes | Set to `production`. Hides stack traces in error pages. |
 | `MONGODB_URI` | Yes | MongoDB connection string. Default for local install: `mongodb://localhost:27017/firehawk` |
+| `SESSION_SECRET` | Yes | Random string used to sign session cookies. See above for generation. |
+| `ADMIN_USERNAME` | Yes | Admin login username. |
+| `ADMIN_PASSWORD_HASH` | Yes | bcrypt hash of admin password. See above for generation. |
 | `MUX_TOKEN_ID` | No* | Mux API token ID. Required for Sync from Mux feature. |
 | `MUX_TOKEN_SECRET` | No* | Mux API token secret. Required for Sync from Mux feature. |
 
