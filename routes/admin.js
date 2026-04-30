@@ -135,7 +135,26 @@ router.post('/videos', async (req, res) => {
 
     res.redirect('/admin/videos?success=Video created successfully');
   } catch (error) {
-    res.redirect(`/admin/videos/new?error=${encodeURIComponent(error.message)}`);
+    const clients = await Video.distinct('client');
+    const tags = await Video.distinct('tags');
+    const categories = await Video.distinct('category');
+    const agencies = await Video.distinct('agency');
+    const { client, project, date, tags: rawTags, embedId, title, description, category, agency } = req.body;
+    let parsedTags = rawTags;
+    if (typeof rawTags === 'string') {
+      parsedTags = rawTags.split(',').map(t => t.trim()).filter(t => t);
+    }
+    const friendlyError = error.code === 11000
+      ? 'A video with that Mux Playback ID already exists.'
+      : error.message;
+    res.render('admin/videos/form', {
+      title: 'Add Video',
+      video: { client, project, date, tags: parsedTags, embedId, title, description, category, agency },
+      clients, tags, categories, agencies,
+      action: '/admin/videos',
+      method: 'POST',
+      error: friendlyError
+    });
   }
 });
 
@@ -228,7 +247,10 @@ router.post('/videos/:id', async (req, res) => {
 
     res.redirect('/admin/videos?success=Video updated successfully');
   } catch (error) {
-    res.redirect(`/admin/videos/${req.params.id}/edit?error=${encodeURIComponent(error.message)}`);
+    const friendlyError = error.code === 11000
+      ? 'A video with that Mux Playback ID already exists.'
+      : error.message;
+    res.redirect(`/admin/videos/${req.params.id}/edit?error=${encodeURIComponent(friendlyError)}`);
   }
 });
 
@@ -331,7 +353,7 @@ router.post('/presentations', upload.single('clientLogoFile'), async (req, res) 
       expiresAt: expiresAt || null
     });
 
-    res.redirect(`/admin/presentations?success=Presentation created! URL: /p/${presentation.slug}`);
+    res.redirect(`/admin/presentations?success=Presentation created! URL: /hello/${presentation.slug}`);
   } catch (error) {
     res.redirect(`/admin/presentations/new?error=${encodeURIComponent(error.message)}`);
   }

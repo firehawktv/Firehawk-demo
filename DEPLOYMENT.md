@@ -261,7 +261,7 @@ sudo certbot renew --dry-run
 
 1. Visit `https://firehawk.tv/admin` — admin dashboard should load
 2. Go to **Presentations → Create** and upload a client logo — it should save and display
-3. Create a test presentation and visit `https://firehawk.tv/p/<slug>` — the public view should render
+3. Create a test presentation and visit `https://firehawk.tv/hello/<slug>` — the public view should render
 4. Click **Sync from Mux** — should pull assets from your Mux account (requires valid Mux credentials)
 
 Check logs at any time:
@@ -371,6 +371,34 @@ sudo nginx -t && sudo systemctl reload nginx
 The CMS will now be accessible at `https://cms.firehawk.tv/admin`.
 
 ---
+## Migrating local database
+
+Standard MongoDB dump/restore — run this locally, copy the dump to the server,
+   restore it there.
+
+  1. Dump your local database:
+  ```mongodump --db firehawk --out ~/firehawk-dump```
+
+  2. Copy the dump to your server:
+  ```scp -r ~/firehawk-dump firehawk@firehawk.tv:/home/firehawk/firehawk-dump```
+
+  3. SSH into the server and restore it:
+  ```ssh firehawk@firehawk.tv  mongorestore --db firehawk /home/firehawk/firehawk-dump/firehawk```
+
+  4. Clean up the dump file:
+ ``` rm -rf /home/firehawk/firehawk-dump```
+
+  That's it. The restore won't touch anything already in the database — it
+  merges — so it's safe to run even if the app has already written a few
+  documents server-side.
+
+  One thing to check: if you have uploaded logos in public/uploads/logos/
+  locally that are referenced by presentations, those image files won't come
+  across with the DB dump. You'd need to copy them separately:
+
+  scp -r /Users/cooney/Sites/firehawk-demo/public/uploads/logos/ \
+    firehawk@firehawk.tv:/home/firehawk/htdocs/firehawk.tv/public/uploads/
+___
 
 ## Troubleshooting
 

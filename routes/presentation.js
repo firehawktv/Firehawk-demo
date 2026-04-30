@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Presentation = require('../models/Presentation');
 
-// GET /p/:slug - View presentation
+// GET /hello/:slug - View presentation
 router.get('/:slug', async (req, res) => {
   try {
     const presentation = await Presentation.findBySlugWithVideos(req.params.slug);
