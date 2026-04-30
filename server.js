@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 app.use('/api/videos', require('./routes/api/videos'));
 app.use('/api/presentations', require('./routes/api/presentations'));
 app.use('/admin', require('./routes/admin'));
-app.use('/p', require('./routes/presentation'));
+app.use('/hello', require('./routes/presentation'));
 
 // Home page
 app.get('/', (req, res) => {

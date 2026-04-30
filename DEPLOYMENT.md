@@ -317,6 +317,61 @@ chmod +x /home/firehawk/deploy.sh
 
 ---
 
+## CloudPanel: Adding a Subdomain
+
+If you're running CloudPanel and want the CMS accessible at a subdomain (e.g. `cms.firehawk.tv`):
+
+### 1. Add the subdomain in CloudPanel
+
+1. Log in to CloudPanel and go to **Sites**
+2. Click **+ Add Site** → choose **Reverse Proxy**
+3. Fill in:
+   - **Domain Name:** `cms.firehawk.tv`
+   - **Reverse Proxy URL:** `http://127.0.0.1:3000`
+4. Save — CloudPanel will generate an nginx vhost for it
+
+### 2. Issue an SSL certificate
+
+In CloudPanel, go to the site's **SSL/TLS** tab and click **Actions → New Let's Encrypt Certificate**. CloudPanel handles the cert and auto-renewal automatically.
+
+### 3. Adjust the nginx vhost (upload limit + static files)
+
+CloudPanel stores vhost configs at `/etc/nginx/sites-enabled/<domain>.conf`. Find the one it generated for `cms.firehawk.tv` and edit it:
+
+```bash
+sudo nano /etc/nginx/sites-enabled/cms.firehawk.tv.conf
+```
+
+Inside the `server` block, add the upload limit and static file locations **before** the existing `location /` block:
+
+```nginx
+# Increase upload limit for logo files
+client_max_body_size 5M;
+
+# Serve static files directly
+location /css/ {
+    root /home/firehawk/htdocs/firehawk.tv/public;
+    expires 30d;
+    add_header Cache-Control "public, immutable";
+}
+
+location /uploads/ {
+    root /home/firehawk/htdocs/firehawk.tv/public;
+    expires 7d;
+}
+```
+
+The existing `location /` reverse proxy block that CloudPanel generated can stay as-is.
+
+Test and reload:
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+The CMS will now be accessible at `https://cms.firehawk.tv/admin`.
+
+---
+
 ## Troubleshooting
 
 **`pm2 logs` shows `MongoNetworkTimeoutError` or `ECONNREFUSED 127.0.0.1:27017`**
