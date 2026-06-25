@@ -91,11 +91,14 @@
         <div class="text-gray-400 text-sm truncate" title="<%= video.client %><%= video.agency ? ' · ' + video.agency : '' %>">
           <%= video.client %><% if (video.agency) { %> <span class="text-gray-500">· <%= video.agency %></span><% } %>
         </div>
-        <% if (video.category) { %>
-          <div class="flex flex-wrap gap-1 mt-1">
+        <div class="flex flex-wrap gap-1 mt-1">
+          <% if (video.category) { %>
             <span class="px-2 py-0.5 bg-spindle-600 text-white text-xs rounded-full" style="text-transform: capitalize;"><%= video.category %></span>
-          </div>
-        <% } %>
+          <% } %>
+          <% if (video.showOnSite) { %>
+            <span class="px-2 py-0.5 bg-green-700 text-green-200 text-xs rounded-full">Published</span>
+          <% } %>
+        </div>
       </div>
 
       <!-- Actions -->
