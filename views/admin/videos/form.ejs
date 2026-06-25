@@ -152,6 +152,14 @@
         <label for="isActive" class="ml-2 text-sm text-gray-300">Active (visible in presentations)</label>
       </div>
 
+      <!-- Publish to Site -->
+      <div class="flex items-center">
+        <input type="checkbox" name="showOnSite" id="showOnSite"
+               <%= video.showOnSite ? 'checked' : '' %>
+               class="h-4 w-4 text-spindle-600 focus:ring-spindle-500 bg-gray-700 border-gray-600 rounded">
+        <label for="showOnSite" class="ml-2 text-sm text-gray-300">Publish to firehawk.tv portfolio</label>
+      </div>
+
       <!-- Preview -->
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Preview</label>
