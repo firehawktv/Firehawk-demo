@@ -55,6 +55,10 @@ const VideoSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  showOnSite: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true
