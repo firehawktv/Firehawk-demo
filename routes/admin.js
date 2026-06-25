@@ -265,7 +265,7 @@ router.get('/videos/:id/edit', async (req, res) => {
 // Update video
 router.post('/videos/:id', async (req, res) => {
   try {
-    const { client, project, date, tags, embedId, title, description, isActive, category, agency } = req.body;
+    const { client, project, date, tags, embedId, title, description, isActive, showOnSite, category, agency } = req.body;
 
     let parsedTags = tags;
     if (typeof tags === 'string') {
@@ -281,6 +281,7 @@ router.post('/videos/:id', async (req, res) => {
       title,
       description,
       isActive: isActive === 'on' || isActive === 'true',
+      showOnSite: showOnSite === 'on' || showOnSite === 'true',
       category: category || null,
       agency: agency || null
     });
