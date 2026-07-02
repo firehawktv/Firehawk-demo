@@ -94,14 +94,26 @@
       </div>
     </div>
 
-    <!-- Embed ID -->
-    <div>
-      <label for="embedId" class="block text-sm font-medium text-gray-300 mb-1">Mux Playback ID *</label>
-      <input type="text" name="embedId" id="embedId" required
-             value="<%= video ? video.embedId : '' %>"
-             class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 font-mono placeholder-gray-400"
-             placeholder="e.g., DS00Spx1CV902MCtPj5WknGlR100V0...">
-      <p class="mt-1 text-sm text-gray-400">The playback ID from your Mux dashboard</p>
+    <!-- Embed ID + Thumbnail Time -->
+    <div class="grid grid-cols-1 md:grid-cols-[1fr_160px] gap-6">
+      <div>
+        <label for="embedId" class="block text-sm font-medium text-gray-300 mb-1">Mux Playback ID *</label>
+        <input type="text" name="embedId" id="embedId" required
+               value="<%= video ? video.embedId : '' %>"
+               class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 font-mono placeholder-gray-400"
+               placeholder="e.g., DS00Spx1CV902MCtPj5WknGlR100V0...">
+        <p class="mt-1 text-sm text-gray-400">The playback ID from your Mux dashboard</p>
+      </div>
+      <div>
+        <label for="thumbnail" class="block text-sm font-medium text-gray-300 mb-1">Thumbnail Time <span class="text-gray-500 font-normal">(seconds)</span></label>
+        <input type="number" name="thumbnail" id="thumbnail"
+               value="<%= video && video.thumbnail != null ? video.thumbnail : '' %>"
+               min="0" step="1"
+               style="-moz-appearance:textfield"
+               class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+               placeholder="e.g., 4">
+        <p class="mt-1 text-sm text-gray-400">Frame offset for poster image</p>
+      </div>
     </div>
 
     <!-- Title -->

@@ -30,9 +30,11 @@ app.use(session({
   }
 }));
 
-// Make current path available to all views
+// Make current path and flash messages available to all views
 app.use((req, res, next) => {
   res.locals.currentPath = req.path;
+  res.locals.flash = req.session.flash || null;
+  delete req.session.flash;
   next();
 });
 

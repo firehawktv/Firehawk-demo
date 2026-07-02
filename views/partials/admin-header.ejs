@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %> | Firehawk Admin</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('form').forEach(function (f) { f.autocomplete = 'off'; });
+      document.querySelectorAll('input, textarea').forEach(function (el) { el.autocomplete = 'off'; });
+    });
+  </script>
 </head>
 <body class="bg-gray-900 min-h-screen">
   <!-- Navigation -->
@@ -61,6 +67,60 @@
       </div>
     </div>
   </nav>
+
+  <!-- Flash toast -->
+  <% if (locals.flash) { %>
+    <div id="flash-toast" style="
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-size: 0.875rem;
+      font-weight: 500;
+      max-width: 24rem;
+      <% if (locals.flash.type === 'success') { %>
+        background: #166534;
+        border: 1px solid #16a34a;
+        color: #dcfce7;
+      <% } else { %>
+        background: #7f1d1d;
+        border: 1px solid #b91c1c;
+        color: #fee2e2;
+      <% } %>
+    ">
+      <% if (locals.flash.type === 'success') { %>
+        <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;color:#4ade80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      <% } else { %>
+        <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;color:#f87171" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path>
+        </svg>
+      <% } %>
+      <span style="flex:1"><%= locals.flash.msg %></span>
+      <button onclick="dismissToast()" style="opacity:0.6;margin-left:0.25rem;flex-shrink:0;cursor:pointer;background:none;border:none;color:inherit" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+        <svg style="width:1rem;height:1rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <script>
+      function dismissToast() {
+        var t = document.getElementById('flash-toast');
+        if (!t) return;
+        t.style.transition = 'opacity 0.4s';
+        t.style.opacity = '0';
+        setTimeout(function() { t.remove(); }, 400);
+      }
+      setTimeout(dismissToast, 5000);
+    </script>
+  <% } %>
 
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">

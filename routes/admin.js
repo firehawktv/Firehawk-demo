@@ -7,6 +7,12 @@ const Video = require('../models/Video');
 const Presentation = require('../models/Presentation');
 const muxService = require('../services/muxService');
 
+// ==================== HELPERS ====================
+
+function flash(req, type, msg) {
+  req.session.flash = { type, msg };
+}
+
 // ==================== AUTH ====================
 
 function requireAuth(req, res, next) {
@@ -96,24 +102,33 @@ router.get('/', async (req, res) => {
 // List all videos
 router.get('/videos', async (req, res) => {
   try {
-    const { client, tag, search, page = 1 } = req.query;
+    const { search, page = 1, sort = 'createdAt' } = req.query;
+    const clientFilter = [].concat(req.query.client || []).filter(Boolean);
+    const tagFilter = [].concat(req.query.tag || []).filter(Boolean);
+    const categoryFilter = [].concat(req.query.category || []).filter(Boolean);
     const limit = 20;
     const skip = (page - 1) * limit;
 
     let query = {};
-    if (client) query.client = new RegExp(client, 'i');
-    if (tag) query.tags = tag;
+    const orClauses = [];
+    if (clientFilter.length) orClauses.push({ client: { $in: clientFilter } });
+    if (tagFilter.length) orClauses.push({ tags: { $in: tagFilter } });
+    if (categoryFilter.length) orClauses.push({ category: { $in: categoryFilter } });
+    if (orClauses.length > 1) query.$or = orClauses;
+    else if (orClauses.length === 1) Object.assign(query, orClauses[0]);
     if (search) query.$text = { $search: search };
 
+    const sortField = sort === 'date' ? { date: -1 } : { createdAt: -1 };
+
     const videos = await Video.find(query)
-      .sort({ createdAt: -1 })
+      .sort(sortField)
       .limit(limit)
       .skip(skip);
 
     const total = await Video.countDocuments(query);
-    const clients = await Video.distinct('client');
-    const tags = await Video.distinct('tags');
-    const categories = await Video.distinct('category');
+    const clients = (await Video.distinct('client')).filter(Boolean);
+    const tags = (await Video.distinct('tags')).filter(Boolean);
+    const categories = (await Video.distinct('category')).filter(Boolean);
 
     res.render('admin/videos/index', {
       title: 'Manage Videos',
@@ -121,7 +136,7 @@ router.get('/videos', async (req, res) => {
       clients,
       tags,
       categories,
-      filters: { client, tag, search },
+      filters: { client: clientFilter, tag: tagFilter, category: categoryFilter, search, sort },
       pagination: {
         page: parseInt(page),
         totalPages: Math.ceil(total / limit),
@@ -154,7 +169,7 @@ router.get('/videos/new', async (req, res) => {
 // Create video
 router.post('/videos', async (req, res) => {
   try {
-    const { client, project, date, tags, embedId, title, description, category, agency } = req.body;
+    const { client, project, date, tags, embedId, title, description, category, agency, thumbnail } = req.body;
 
     let parsedTags = tags;
     if (typeof tags === 'string') {
@@ -170,10 +185,12 @@ router.post('/videos', async (req, res) => {
       title,
       description,
       category: category || null,
-      agency: agency || null
+      agency: agency || null,
+      thumbnail: thumbnail !== '' && thumbnail != null ? parseInt(thumbnail, 10) : null
     });
 
-    res.redirect('/admin/videos?success=Video created successfully');
+    flash(req, 'success', 'Video created successfully');
+    res.redirect('/admin/videos');
   } catch (error) {
     const clients = await Video.distinct('client');
     const tags = await Video.distinct('tags');
@@ -205,7 +222,8 @@ router.post('/videos/sync-mux', async (req, res) => {
     // Check if Mux is configured
     if (!muxService.isConfigured()) {
       console.log('[Mux Sync] Error: Mux credentials not configured');
-      return res.redirect('/admin/videos?error=' + encodeURIComponent('Mux API credentials not configured. Add MUX_TOKEN_ID and MUX_TOKEN_SECRET to your environment.'));
+      flash(req, 'error', 'Mux API credentials not configured. Add MUX_TOKEN_ID and MUX_TOKEN_SECRET to your environment.');
+      return res.redirect('/admin/videos');
     }
 
     console.log('[Mux Sync] Credentials found, fetching assets from Mux...');
@@ -227,10 +245,12 @@ router.post('/videos/sync-mux', async (req, res) => {
     }
 
     console.log('[Mux Sync] Success:', message);
-    res.redirect('/admin/videos?success=' + encodeURIComponent(message));
+    flash(req, 'success', message);
+    res.redirect('/admin/videos');
   } catch (error) {
     console.error('[Mux Sync] Failed:', error);
-    res.redirect('/admin/videos?error=' + encodeURIComponent('Mux sync failed: ' + error.message));
+    flash(req, 'error', 'Mux sync failed: ' + error.message);
+    res.redirect('/admin/videos');
   }
 });
 
@@ -239,7 +259,8 @@ router.get('/videos/:id/edit', async (req, res) => {
   try {
     const video = await Video.findById(req.params.id);
     if (!video) {
-      return res.redirect('/admin/videos?error=Video not found');
+      flash(req, 'error', 'Video not found');
+      return res.redirect('/admin/videos');
     }
 
     const clients = await Video.distinct('client');
@@ -258,14 +279,15 @@ router.get('/videos/:id/edit', async (req, res) => {
       method: 'POST'
     });
   } catch (error) {
-    res.redirect(`/admin/videos?error=${encodeURIComponent(error.message)}`);
+    flash(req, 'error', error.message);
+    res.redirect('/admin/videos');
   }
 });
 
 // Update video
 router.post('/videos/:id', async (req, res) => {
   try {
-    const { client, project, date, tags, embedId, title, description, isActive, showOnSite, category, agency } = req.body;
+    const { client, project, date, tags, embedId, title, description, isActive, showOnSite, category, agency, thumbnail } = req.body;
 
     let parsedTags = tags;
     if (typeof tags === 'string') {
@@ -283,15 +305,18 @@ router.post('/videos/:id', async (req, res) => {
       isActive: isActive === 'on' || isActive === 'true',
       showOnSite: showOnSite === 'on' || showOnSite === 'true',
       category: category || null,
-      agency: agency || null
+      agency: agency || null,
+      thumbnail: thumbnail !== '' && thumbnail != null ? parseInt(thumbnail, 10) : null
     });
 
-    res.redirect('/admin/videos?success=Video updated successfully');
+    flash(req, 'success', 'Video updated successfully');
+    res.redirect('/admin/videos');
   } catch (error) {
     const friendlyError = error.code === 11000
       ? 'A video with that Mux Playback ID already exists.'
       : error.message;
-    res.redirect(`/admin/videos/${req.params.id}/edit?error=${encodeURIComponent(friendlyError)}`);
+    flash(req, 'error', friendlyError);
+    res.redirect(`/admin/videos/${req.params.id}/edit`);
   }
 });
 
@@ -299,9 +324,11 @@ router.post('/videos/:id', async (req, res) => {
 router.post('/videos/:id/delete', async (req, res) => {
   try {
     await Video.findByIdAndDelete(req.params.id);
-    res.redirect('/admin/videos?success=Video deleted successfully');
+    flash(req, 'success', 'Video deleted successfully');
+    res.redirect('/admin/videos');
   } catch (error) {
-    res.redirect(`/admin/videos?error=${encodeURIComponent(error.message)}`);
+    flash(req, 'error', error.message);
+    res.redirect('/admin/videos');
   }
 });
 
@@ -394,9 +421,11 @@ router.post('/presentations', upload.single('clientLogoFile'), async (req, res) 
       expiresAt: expiresAt || null
     });
 
-    res.redirect(`/admin/presentations?success=Presentation created! URL: /hello/${presentation.slug}`);
+    flash(req, 'success', `Presentation created! URL: /hello/${presentation.slug}`);
+    res.redirect('/admin/presentations');
   } catch (error) {
-    res.redirect(`/admin/presentations/new?error=${encodeURIComponent(error.message)}`);
+    flash(req, 'error', error.message);
+    res.redirect('/admin/presentations/new');
   }
 });
 
@@ -405,7 +434,8 @@ router.get('/presentations/:id/edit', async (req, res) => {
   try {
     const presentation = await Presentation.findById(req.params.id).populate('videos');
     if (!presentation) {
-      return res.redirect('/admin/presentations?error=Presentation not found');
+      flash(req, 'error', 'Presentation not found');
+      return res.redirect('/admin/presentations');
     }
 
     const videos = await Video.find({ isActive: true }).sort({ client: 1, createdAt: -1 });
@@ -422,7 +452,8 @@ router.get('/presentations/:id/edit', async (req, res) => {
       method: 'POST'
     });
   } catch (error) {
-    res.redirect(`/admin/presentations?error=${encodeURIComponent(error.message)}`);
+    flash(req, 'error', error.message);
+    res.redirect('/admin/presentations');
   }
 });
 
@@ -470,9 +501,11 @@ router.post('/presentations/:id', upload.single('clientLogoFile'), async (req, r
 
     await Presentation.findByIdAndUpdate(req.params.id, updateData);
 
-    res.redirect('/admin/presentations?success=Presentation updated successfully');
+    flash(req, 'success', 'Presentation updated successfully');
+    res.redirect('/admin/presentations');
   } catch (error) {
-    res.redirect(`/admin/presentations/${req.params.id}/edit?error=${encodeURIComponent(error.message)}`);
+    flash(req, 'error', error.message);
+    res.redirect(`/admin/presentations/${req.params.id}/edit`);
   }
 });
 
@@ -480,9 +513,11 @@ router.post('/presentations/:id', upload.single('clientLogoFile'), async (req, r
 router.post('/presentations/:id/delete', async (req, res) => {
   try {
     await Presentation.findByIdAndDelete(req.params.id);
-    res.redirect('/admin/presentations?success=Presentation deleted successfully');
+    flash(req, 'success', 'Presentation deleted successfully');
+    res.redirect('/admin/presentations');
   } catch (error) {
-    res.redirect(`/admin/presentations?error=${encodeURIComponent(error.message)}`);
+    flash(req, 'error', error.message);
+    res.redirect('/admin/presentations');
   }
 });
 
@@ -491,7 +526,8 @@ router.post('/presentations/:id/duplicate', async (req, res) => {
   try {
     const original = await Presentation.findById(req.params.id);
     if (!original) {
-      return res.redirect('/admin/presentations?error=Presentation not found');
+      flash(req, 'error', 'Presentation not found');
+      return res.redirect('/admin/presentations');
     }
 
     const duplicate = await Presentation.create({
@@ -505,9 +541,11 @@ router.post('/presentations/:id/duplicate', async (req, res) => {
       backgroundColor: original.backgroundColor
     });
 
-    res.redirect(`/admin/presentations/${duplicate._id}/edit?success=Presentation duplicated`);
+    flash(req, 'success', 'Presentation duplicated');
+    res.redirect(`/admin/presentations/${duplicate._id}/edit`);
   } catch (error) {
-    res.redirect(`/admin/presentations?error=${encodeURIComponent(error.message)}`);
+    flash(req, 'error', error.message);
+    res.redirect('/admin/presentations');
   }
 });
 
