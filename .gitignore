@@ -34,3 +34,6 @@ DEPLOYMENT.md
 # Claude Skills
 hipocampus.config.json
 Memory/
+
+# Database dumps
+mongo_backups/

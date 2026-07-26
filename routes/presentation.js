@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Presentation = require('../models/Presentation');
+const { notifyPresentationView } = require('../services/notify');
 
 // GET /hello/:slug - View presentation
 router.get('/:slug', async (req, res) => {
@@ -23,6 +24,7 @@ router.get('/:slug', async (req, res) => {
 
     // Record view
     await presentation.recordView();
+    notifyPresentationView(presentation);
 
     // Render based on layout
     const template = presentation.layout === 'reel'
