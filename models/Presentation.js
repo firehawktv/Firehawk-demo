@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
+const { sanitizeMessage } = require('../services/sanitize');
 
 const PresentationSchema = new mongoose.Schema({
   // Unique URL slug for the presentation
@@ -23,7 +24,8 @@ const PresentationSchema = new mongoose.Schema({
   },
   message: {
     type: String,
-    trim: true // Long message/description for the client
+    trim: true, // Long message/description for the client (sanitized HTML)
+    set: sanitizeMessage
   },
   videos: [{
     type: mongoose.Schema.Types.ObjectId,

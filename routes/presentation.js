@@ -31,7 +31,13 @@ router.get('/:slug', async (req, res) => {
       ? 'presentation/reel'
       : 'presentation/grid';
 
+    // Stored colors from before the rebrand (form/model defaults) mean "not customised"
+    const legacyDefaults = ['#6a94c7', '#ef4444'];
+    const custom = presentation.primaryColor;
+    const accent = custom && !legacyDefaults.includes(custom.toLowerCase()) ? custom : '#c8932a';
+
     res.render(template, {
+      accent,
       title: `${presentation.client} - Video Presentation`,
       presentation,
       videos: presentation.videos

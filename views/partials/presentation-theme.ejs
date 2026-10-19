@@ -1,0 +1,112 @@
+<%# Firehawk brand styling shared by the grid and reel presentation layouts (matches firehawk.tv) %>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Martel+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://use.typekit.net/vri0rjm.css">
+<style>
+  :root {
+    --accent-color: <%= accent %>;
+    --nm-radius: 8px;
+    <% if (presentation.theme === 'light') { %>
+    --bg-color: #f0ebe2;
+    --bg-image: radial-gradient(ellipse at top, #faf7f1, #f0ebe2 60%, #e6dfd2);
+    --text-color: #4a443a;
+    --text-strong: #1a1713;
+    --text-muted: #7a7366;
+    --card-bg: #faf7f1;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --nm-raised: -3px -3px 7px rgba(255, 255, 255, 0.9), 4px 4px 12px rgba(120, 100, 60, 0.22);
+    --nm-hover: -2px -2px 5px rgba(255, 255, 255, 0.9), 6px 6px 18px rgba(120, 100, 60, 0.3);
+    --nm-inset: inset 2px 2px 5px rgba(120, 100, 60, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.9);
+    <% } else { %>
+    --bg-color: #0a0a0a;
+    --bg-image: radial-gradient(ellipse at top, #262626, #0a0a0a, #000000);
+    --text-color: #b0a898;
+    --text-strong: #f0ebe2;
+    --text-muted: #777777;
+    --card-bg: #141414;
+    --border-color: rgba(255, 255, 255, 0.06);
+    --nm-raised: -3px -3px 7px rgba(255, 255, 255, 0.045), 4px 4px 12px rgba(0, 0, 0, 0.52);
+    --nm-hover: -2px -2px 5px rgba(255, 255, 255, 0.045), 6px 6px 18px rgba(0, 0, 0, 0.52);
+    --nm-inset: inset 2px 2px 6px rgba(0, 0, 0, 0.52), inset -2px -2px 4px rgba(255, 255, 255, 0.045);
+    <% } %>
+  }
+  html, body { overflow-x: clip; max-width: 100%; }
+  body {
+    background-color: var(--bg-color);
+    background-image: var(--bg-image);
+    background-attachment: fixed;
+    color: var(--text-color);
+    font-family: "Martel Sans", system-ui, sans-serif;
+  }
+  h1, h2, h3 { font-family: "Merriweather", Georgia, serif; color: var(--text-strong); }
+  .accent { color: var(--accent-color); }
+  .accent-bg { background-color: var(--accent-color); }
+  .accent-border { border-color: var(--accent-color); }
+  .card-bg { background-color: var(--card-bg); }
+  .text-muted { color: var(--text-muted); }
+  .border-themed { border-color: var(--border-color); }
+
+  /* Neomorphic surfaces, same tokens as firehawk.tv */
+  .nm-card {
+    background: var(--card-bg);
+    border-radius: var(--nm-radius);
+    box-shadow: var(--nm-raised);
+    border: 0;
+  }
+  .nm-tag {
+    display: inline-block;
+    padding: 0.25em 0.75em;
+    border-radius: 4px;
+    background: var(--card-bg);
+    box-shadow: var(--nm-inset);
+    color: var(--accent-color);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .client-label {
+    color: var(--accent-color);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+  .message-body { line-height: 1.75; }
+  .message-body p { margin-bottom: 0.75em; }
+  .message-body p:last-child { margin-bottom: 0; }
+  .message-body a { color: var(--accent-color); text-decoration: underline; }
+  .message-body ul { list-style: square; padding-left: 1.5rem; margin-bottom: 0.75em; }
+  .message-body ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 0.75em; }
+
+  mux-player {
+    --media-accent-color: var(--accent-color);
+    border-radius: var(--nm-radius);
+    overflow: hidden;
+  }
+
+  .site-footer {
+    background: <%= presentation.theme === 'light' ? '#e6dfd2' : '#0a0a0a' %>;
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, <%= presentation.theme === 'light' ? '0.08' : '0.4' %>);
+  }
+  .brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    transition: opacity 150ms ease;
+  }
+  .brand-link:hover { opacity: 0.8; }
+  .brand-link img { height: 1.75rem; width: auto; }
+  .brand-link span {
+    font-family: "objektiv-mk1", "Martel Sans", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    background: linear-gradient(250deg, #ea2b29, #fbda00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+</style>

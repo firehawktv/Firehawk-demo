@@ -6,26 +6,8 @@
   <title><%= presentation.client %> - Video Presentation</title>
   <link rel="stylesheet" href="/css/styles.css">
   <script src="https://unpkg.com/@mux/mux-player"></script>
+  <%- include('../partials/presentation-theme') %>
   <style>
-    :root {
-      --accent-color: <%= presentation.primaryColor || '#6a94c7' %>;
-      --bg-color: <%= presentation.theme === 'light' ? '#ffffff' : '#111827' %>;
-      --text-color: <%= presentation.theme === 'light' ? '#111827' : '#ffffff' %>;
-      --text-muted: <%= presentation.theme === 'light' ? '#6b7280' : '#9ca3af' %>;
-      --card-bg: <%= presentation.theme === 'light' ? '#f9fafb' : '#1f2937' %>;
-      --border-color: <%= presentation.theme === 'light' ? '#e5e7eb' : '#374151' %>;
-    }
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-    }
-    .accent { color: var(--accent-color); }
-    .accent-bg { background-color: var(--accent-color); }
-    .accent-border { border-color: var(--accent-color); }
-    .card-bg { background-color: var(--card-bg); }
-    .text-muted { color: var(--text-muted); }
-    .border-themed { border-color: var(--border-color); }
-
     /* Thumbnail strip scrolling */
     .thumbnail-strip {
       scroll-behavior: smooth;
@@ -87,8 +69,8 @@
       </div>
 
       <% if (presentation.message) { %>
-        <div class="mt-4 p-3 card-bg rounded-lg border border-themed">
-          <p class="text-muted text-sm leading-relaxed whitespace-pre-wrap"><%= presentation.message %></p>
+        <div class="mt-4 p-4 nm-card">
+          <div class="message-body text-sm"><%- messageToHtml(presentation.message) %></div>
         </div>
       <% } %>
     </div>
@@ -106,7 +88,7 @@
               <mux-player
                 playback-id="<%= videos[0].embedId %>"
                 metadata-video-title="<%= videos[0].title || videos[0].project %>"
-                accent-color="<%= presentation.primaryColor || '#6a94c7' %>"
+                accent-color="<%= accent %>"
                 style="width: 100%; height: 100%;"
               ></mux-player>
             <% } %>
@@ -121,8 +103,8 @@
           </div>
           <div id="current-tags" class="flex flex-wrap gap-1">
             <% if (videos.length > 0 && videos[0].tags) { %>
-              <% videos[0].tags.forEach(function(tag) { %>
-                <span class="text-xs px-2 py-0.5 rounded-full border border-themed text-muted"><%= tag %></span>
+              <% sortedTags(videos[0].tags).forEach(function(tag) { %>
+                <span class="nm-tag"><%= tag %></span>
               <% }); %>
             <% } %>
           </div>
@@ -181,10 +163,7 @@
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="py-4 px-4 text-center text-muted text-sm border-t border-themed flex-shrink-0">
-    <p>Presented by <span class="accent font-semibold">Firehawk</span></p>
-  </footer>
+  <%- include('../partials/presentation-footer') %>
 
   <script>
     const videos = <%- JSON.stringify(videos.map(v => ({
@@ -192,7 +171,7 @@
       embedId: v.embedId,
       title: v.title || v.project,
       description: v.description || '',
-      tags: v.tags || []
+      tags: sortedTags(v.tags)
     }))) %>;
 
     let currentIndex = 0;
@@ -207,7 +186,7 @@
         <mux-player
           playback-id="${video.embedId}"
           metadata-video-title="${video.title}"
-          accent-color="<%= presentation.primaryColor || '#6a94c7' %>"
+          accent-color="<%= accent %>"
           autoplay
           style="width: 100%; height: 100%;"
         ></mux-player>
@@ -220,9 +199,12 @@
 
       // Update tags
       const tagsContainer = document.getElementById('current-tags');
-      tagsContainer.innerHTML = video.tags.map(tag =>
-        `<span class="text-xs px-2 py-0.5 rounded-full border border-themed text-muted">${tag}</span>`
-      ).join('');
+      tagsContainer.replaceChildren(...video.tags.map(tag => {
+        const el = document.createElement('span');
+        el.className = 'nm-tag';
+        el.textContent = tag;
+        return el;
+      }));
 
       // Update thumbnail selection
       document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
