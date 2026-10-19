@@ -11,7 +11,7 @@
   <h1 class="text-3xl font-bold text-white"><%= presentation ? 'Edit Presentation' : 'Create Presentation' %></h1>
   <% if (presentation) { %>
     <p class="mt-2 text-gray-400">
-      Public URL: <a href="/p/<%= presentation.slug %>" target="_blank" class="text-blue-400 hover:underline">/p/<%= presentation.slug %></a>
+      Public URL: <a href="/hello/<%= presentation.slug %>" target="_blank" class="text-blue-400 hover:underline">/hello/<%= presentation.slug %></a>
     </p>
   <% } %>
 </div>
@@ -62,10 +62,9 @@
         </div>
 
         <div class="mt-4">
-          <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Message</label>
-          <textarea name="message" id="message" rows="4"
-                    class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:ring-spindle-500 focus:border-spindle-500 placeholder-gray-400"
-                    placeholder="Personal message for the client..."><%= presentation ? (presentation.message || '') : '' %></textarea>
+          <label for="message-editor" class="block text-sm font-medium text-gray-300 mb-1">Message</label>
+          <div id="message-editor" class="message-editor"><%- presentation ? messageToHtml(presentation.message) : '' %></div>
+          <input type="hidden" name="message" id="message">
         </div>
       </div>
 
@@ -260,6 +259,34 @@
 
   </div>
 </form>
+
+<!-- Quill rich-text editor for the client message -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+<style>
+  .message-editor { background: #374151; color: #fff; border-radius: 0 0 .5rem .5rem; min-height: 10rem; font-size: .95rem; }
+  .ql-toolbar.ql-snow { background: #4b5563; border-color: #4b5563; border-radius: .5rem .5rem 0 0; }
+  .ql-container.ql-snow { border-color: #4b5563; border-radius: 0 0 .5rem .5rem; }
+  .ql-snow .ql-stroke { stroke: #e5e7eb; }
+  .ql-snow .ql-fill { fill: #e5e7eb; }
+  .ql-snow .ql-picker { color: #e5e7eb; }
+  .ql-snow.ql-toolbar button:hover .ql-stroke, .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #87afd3; }
+  .ql-editor.ql-blank::before { color: #9ca3af; font-style: normal; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+const quill = new Quill('#message-editor', {
+  theme: 'snow',
+  placeholder: 'Personal message for the client...',
+  modules: {
+    toolbar: [['bold', 'italic', 'underline'], [{ list: 'ordered' }, { list: 'bullet' }], ['link'], ['clean']]
+  }
+});
+// Copy the editor's HTML into the hidden field on submit (server sanitizes it)
+document.querySelector('form').addEventListener('submit', function() {
+  document.getElementById('message').value =
+    quill.getText().trim() === '' ? '' : quill.root.innerHTML;
+});
+</script>
 
 <!-- SortableJS -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>

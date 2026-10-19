@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Presentation = require('../models/Presentation');
+const { notifyPresentationView } = require('../services/notify');
 
-// GET /p/:slug - View presentation
+// GET /hello/:slug - View presentation
 router.get('/:slug', async (req, res) => {
   try {
     const presentation = await Presentation.findBySlugWithVideos(req.params.slug);
@@ -23,13 +24,20 @@ router.get('/:slug', async (req, res) => {
 
     // Record view
     await presentation.recordView();
+    notifyPresentationView(presentation);
 
     // Render based on layout
     const template = presentation.layout === 'reel'
       ? 'presentation/reel'
       : 'presentation/grid';
 
+    // Stored colors from before the rebrand (form/model defaults) mean "not customised"
+    const legacyDefaults = ['#6a94c7', '#ef4444'];
+    const custom = presentation.primaryColor;
+    const accent = custom && !legacyDefaults.includes(custom.toLowerCase()) ? custom : '#c8932a';
+
     res.render(template, {
+      accent,
       title: `${presentation.client} - Video Presentation`,
       presentation,
       videos: presentation.videos

@@ -46,8 +46,8 @@ const VideoSchema = new mongoose.Schema({
     trim: true
   },
   thumbnail: {
-    type: String,
-    trim: true
+    type: Number,
+    min: 0
   },
   duration: {
     type: Number // Duration in seconds
@@ -55,6 +55,10 @@ const VideoSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  showOnSite: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true
@@ -70,8 +74,8 @@ VideoSchema.virtual('playbackUrl').get(function() {
 
 // Virtual for Mux thumbnail URL
 VideoSchema.virtual('thumbnailUrl').get(function() {
-  if (this.thumbnail) return this.thumbnail;
-  return `https://image.mux.com/${this.embedId}/thumbnail.jpg`;
+  const time = this.thumbnail != null ? `?time=${this.thumbnail}` : '';
+  return `https://image.mux.com/${this.embedId}/thumbnail.jpg${time}`;
 });
 
 // Virtual for Mux poster URL

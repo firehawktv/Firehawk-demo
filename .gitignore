@@ -27,3 +27,13 @@ dist/
 # Temporary files
 tmp/
 temp/
+
+# Personal instructions
+DEPLOYMENT.md
+
+# Claude Skills
+hipocampus.config.json
+Memory/
+
+# Database dumps
+mongo_backups/

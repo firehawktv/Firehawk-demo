@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const session = require('express-session');
 const connectDB = require('./config/db');
 
 const app = express();
@@ -16,10 +17,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 // View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.locals.messageToHtml = require('./services/sanitize').messageToHtml;
+// Alphabetical, case-insensitive, so tags read the same on every card
+app.locals.sortedTags = (tags) =>
+  [...(tags || [])].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
-// Make current path available to all views
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'change-me-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  }
+}));
+
+// Make current path and flash messages available to all views
 app.use((req, res, next) => {
   res.locals.currentPath = req.path;
+  res.locals.flash = req.session.flash || null;
+  delete req.session.flash;
   next();
 });
 
@@ -27,7 +46,7 @@ app.use((req, res, next) => {
 app.use('/api/videos', require('./routes/api/videos'));
 app.use('/api/presentations', require('./routes/api/presentations'));
 app.use('/admin', require('./routes/admin'));
-app.use('/p', require('./routes/presentation'));
+app.use('/hello', require('./routes/presentation'));
 
 // Home page
 app.get('/', (req, res) => {

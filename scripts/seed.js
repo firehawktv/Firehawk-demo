@@ -119,7 +119,7 @@ async function seed() {
     // Log the URLs
     console.log('\n=== Sample Presentation URLs ===');
     createdPresentations.forEach(p => {
-      console.log(`${p.client}: /p/${p.slug}`);
+      console.log(`${p.client}: /hello/${p.slug}`);
     });
 
     console.log('\nSeed completed successfully!');
