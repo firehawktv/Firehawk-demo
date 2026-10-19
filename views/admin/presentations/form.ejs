@@ -281,10 +281,10 @@ const quill = new Quill('#message-editor', {
     toolbar: [['bold', 'italic', 'underline'], [{ list: 'ordered' }, { list: 'bullet' }], ['link'], ['clean']]
   }
 });
-// Copy the editor's HTML into the hidden field on submit (server sanitizes it)
+// Copy the editor's HTML into the hidden field on submit (semantic HTML: real ul/ol, no editor-only markup; server sanitizes it)
 document.querySelector('form').addEventListener('submit', function() {
   document.getElementById('message').value =
-    quill.getText().trim() === '' ? '' : quill.root.innerHTML;
+    quill.getText().trim() === '' ? '' : quill.getSemanticHTML();
 });
 </script>
 
