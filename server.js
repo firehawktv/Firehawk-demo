@@ -17,6 +17,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.locals.messageToHtml = require('./services/sanitize').messageToHtml;
+// Alphabetical, case-insensitive, so tags read the same on every card
+app.locals.sortedTags = (tags) =>
+  [...(tags || [])].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
 // Session middleware
 app.use(session({
