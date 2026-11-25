@@ -15,9 +15,15 @@ const MESSAGE_OPTIONS = {
   }
 };
 
+// Quill 2's getSemanticHTML() turns every space into &nbsp;, which stops
+// the message from wrapping. Convert them (entity or U+00A0 char) back.
+function normalizeSpaces(html) {
+  return html.replace(/&nbsp;| /g, ' ');
+}
+
 function sanitizeMessage(html) {
   if (!html) return html;
-  const clean = sanitizeHtml(html, MESSAGE_OPTIONS).trim();
+  const clean = normalizeSpaces(sanitizeHtml(html, MESSAGE_OPTIONS)).trim();
   // Quill leaves empty paragraphs (<p><br></p>) when the editor is cleared
   const hasText = sanitizeHtml(clean, { allowedTags: [] }).trim() !== '';
   return hasText ? clean : '';
@@ -26,7 +32,8 @@ function sanitizeMessage(html) {
 // Messages saved before the HTML editor are plain text with newlines
 function messageToHtml(message) {
   if (!message) return '';
-  if (/<[a-z][\s\S]*>/i.test(message)) return message;
+  // Messages saved before normalizeSpaces existed may still contain &nbsp;
+  if (/<[a-z][\s\S]*>/i.test(message)) return normalizeSpaces(message);
   const escaped = message
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
