@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "css:build": "npx tailwindcss -i ./src/css/input.css -o ./public/css/styles.css",
-    "css:watch": "npx tailwindcss -i ./src/css/input.css -o ./public/css/styles.css --watch",
+    "css:build": "tailwindcss -i ./src/css/input.css -o ./public/css/styles.css",
+    "css:watch": "tailwindcss -i ./src/css/input.css -o ./public/css/styles.css --watch",
     "build": "npm run css:build",
     "seed": "node scripts/seed.js"
   },
