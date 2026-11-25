@@ -24,7 +24,7 @@
 <% } %>
 
 <!-- Form -->
-<form action="<%= action %>" method="<%= method %>" enctype="multipart/form-data" class="space-y-6">
+<form id="presentation-form" action="<%= action %>" method="<%= method %>" enctype="multipart/form-data" class="space-y-6">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     <!-- Main Content -->
@@ -282,7 +282,7 @@ const quill = new Quill('#message-editor', {
   }
 });
 // Copy the editor's HTML into the hidden field on submit (semantic HTML: real ul/ol, no editor-only markup; server sanitizes it)
-document.querySelector('form').addEventListener('submit', function() {
+document.getElementById('presentation-form').addEventListener('submit', function() {
   document.getElementById('message').value =
     quill.getText().trim() === '' ? '' : quill.getSemanticHTML();
 });
